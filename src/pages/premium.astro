@@ -1,0 +1,276 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout titre="Octy Premium">
+  <main class="premium-page" aria-labelledby="premium-title">
+    <section class="premium-hero" aria-hidden="true">
+      <img src="/svg/HEADER1.svg" alt="" />
+    </section>
+
+    <section class="premium-content">
+      <h1 id="premium-title">Passe &agrave; Octy<br />Premium&nbsp;!</h1>
+
+      <div class="premium-benefits">
+        <h2>Rappel des avantages&nbsp;:</h2>
+        <p>
+          Vous b&eacute;n&eacute;ficierez d&rsquo;une navigation sans publicit&eacute;, d&rsquo;un suivi de progression personnalis&eacute; et d&rsquo;un acc&egrave;s &agrave; des modules et contenus suppl&eacute;mentaires&nbsp;!
+        </p>
+      </div>
+
+      <div class="premium-price">
+        <p class="premium-price-main">Prix de 4,90 &euro; (paiement unique)</p>
+        <p id="premiumPaymentHelp" aria-live="polite">Paiement prototype non fonctionnel.</p>
+      </div>
+
+      <form class="premium-form" aria-describedby="premiumPaymentHelp premiumPrototypeStatus" novalidate>
+        <div class="premium-field">
+          <label for="cardName">Nom du titulaire de la carte</label>
+          <input id="cardName" name="cardName" type="text" required placeholder="Nom du titulaire de la carte..." autocomplete="cc-name" aria-describedby="premiumPaymentHelp premiumPrototypeStatus" aria-required="true" />
+        </div>
+
+        <div class="premium-field">
+          <label for="cardNumber">Num&eacute;ro de carte bancaire</label>
+          <input id="cardNumber" name="cardNumber" type="text" required inputmode="numeric" placeholder="Num&eacute;ro de carte bancaire..." autocomplete="cc-number" aria-describedby="premiumPaymentHelp premiumPrototypeStatus" aria-required="true" />
+        </div>
+
+        <div class="premium-field">
+          <label for="cardExpiry">Date d&rsquo;expiration</label>
+          <input id="cardExpiry" name="cardExpiry" type="text" required inputmode="numeric" placeholder="Date d&rsquo;expiration..." autocomplete="cc-exp" aria-describedby="premiumPaymentHelp premiumPrototypeStatus" aria-required="true" />
+        </div>
+
+        <div class="premium-field">
+          <label for="cardCvc">Code de s&eacute;curit&eacute; (CVC / 3 chiffres)</label>
+          <input id="cardCvc" name="cardCvc" type="text" required inputmode="numeric" placeholder="Code de s&eacute;curit&eacute;..." autocomplete="cc-csc" aria-describedby="premiumPaymentHelp premiumPrototypeStatus" aria-required="true" />
+        </div>
+
+        <div class="premium-terms">
+          <input id="premiumTerms" name="premiumTerms" type="checkbox" required aria-describedby="premiumPaymentHelp premiumPrototypeStatus" aria-required="true" />
+          <label for="premiumTerms">
+            J&rsquo;accepte les <a href="/cgu">conditions g&eacute;n&eacute;rales d&rsquo;utilisation et les modalit&eacute;s de paiement*</a>
+          </label>
+        </div>
+
+        <div class="premium-action">
+          <button type="button" aria-describedby="premiumPaymentHelp premiumPrototypeStatus">Valider</button>
+        </div>
+
+        <p id="premiumPrototypeStatus" class="sr-only" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .premium-page {
+    min-height: calc(100dvh - 128px);
+    background: #ffcfa5;
+    color: #e44d4c;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  .premium-hero {
+    position: relative;
+    overflow: hidden;
+    background: #ffcfa5;
+    line-height: 0;
+  }
+
+  .premium-hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 63%;
+    background: #e44d4c;
+    mask: radial-gradient(circle at 50% 98%, transparent 0 28vw, #000 calc(28vw + 1px));
+    pointer-events: none;
+    -webkit-mask: radial-gradient(circle at 50% 98%, transparent 0 28vw, #000 calc(28vw + 1px));
+  }
+
+  .premium-hero img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .premium-content {
+    padding: 18px 38px 46px;
+  }
+
+  .premium-content h1 {
+    margin: 0 0 34px;
+    color: #e44d4c;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 33px;
+    font-weight: 900;
+    line-height: 33px;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .premium-benefits {
+    margin-bottom: 27px;
+  }
+
+  .premium-benefits h2,
+  .premium-price-main {
+    margin: 0;
+    color: #e44d4c;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 19px;
+    font-weight: 900;
+    line-height: 22px;
+  }
+
+  .premium-benefits h2 {
+    margin-bottom: 7px;
+    text-transform: uppercase;
+  }
+
+  .premium-benefits p {
+    margin: 0;
+    color: #ee6858;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 18px;
+  }
+
+  .premium-price {
+    margin-bottom: 20px;
+  }
+
+  .premium-price p {
+    margin: 0;
+  }
+
+  .premium-price > p:last-child {
+    margin-top: 2px;
+    color: #ee6858;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 15px;
+  }
+
+  .premium-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .premium-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .premium-field label {
+    color: #000000;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17px;
+  }
+
+  .premium-field input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    border: 1.5px solid #ee6858;
+    border-radius: 14px;
+    background: transparent;
+    color: #e44d4c;
+    font-size: 15px;
+    outline: none;
+    padding: 0 18px;
+  }
+
+  .premium-field input::placeholder {
+    color: rgba(238, 104, 88, 0.78);
+  }
+
+  .premium-field input:focus {
+    border-color: #e44d4c;
+  }
+
+  .premium-terms {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: -1px;
+    color: #ee6858;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 12px;
+  }
+
+  .premium-terms input {
+    appearance: none;
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    border: 2px solid #ee6858;
+    background: transparent;
+  }
+
+  .premium-terms input:checked {
+    background:
+      linear-gradient(45deg, transparent 47%, #ee6858 47% 56%, transparent 56%),
+      linear-gradient(-45deg, transparent 47%, #ee6858 47% 56%, transparent 56%);
+  }
+
+  .premium-terms a {
+    color: #ee6858;
+    text-decoration: underline;
+  }
+
+  .premium-action {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 17px;
+  }
+
+  .premium-action button {
+    width: 151px;
+    height: 45px;
+    border: 0;
+    border-radius: 999px;
+    background: #e44d4c;
+    color: #ffcfa5;
+    cursor: pointer;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  @media (max-width: 360px) {
+    .premium-content {
+      padding-inline: 26px;
+    }
+
+    .premium-content h1 {
+      font-size: 30px;
+      line-height: 31px;
+    }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  const premiumForm = document.querySelector('.premium-form');
+  const premiumButton = premiumForm?.querySelector('button');
+  const prototypeStatus = document.getElementById('premiumPrototypeStatus');
+
+  premiumForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+  });
+
+  premiumButton?.addEventListener('click', () => {
+    if (prototypeStatus) {
+      prototypeStatus.textContent = "Aucun paiement n'est lance : ce formulaire est un prototype.";
+    }
+  });
+</script>

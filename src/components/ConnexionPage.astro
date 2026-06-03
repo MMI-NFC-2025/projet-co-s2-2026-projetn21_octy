@@ -1,0 +1,546 @@
+<main class="auth-page">
+  <section class="auth-card" aria-label="Connexion Octy">
+    <div class="auth-illustration" aria-hidden="true">
+      <img src="/svg/HEADER1.svg" alt="" />
+    </div>
+
+    <button id="modeBack" class="mode-back hidden" type="button" aria-label="Retour a l'ecran de connexion">
+      <span class="mode-back-icon" aria-hidden="true"></span>
+    </button>
+
+    <div class="body">
+      <h1 id="pageTitle" class="title">Bon retour<br />parmis nous !</h1>
+
+      <form id="authForm" novalidate>
+        <div id="nomField" class="field hidden">
+          <label for="nom" id="nomLabel" class="label">Le nom que tu veux utiliser*</label>
+          <input id="nom" name="nom" type="text" class="input" placeholder="Entre ton nom ou ton pseudonyme..." autocomplete="off" aria-describedby="authMessage" aria-required="false" />
+        </div>
+
+        <div class="field">
+          <label for="email" class="label">Adresse email*</label>
+          <input id="email" name="email" type="email" required class="input" placeholder="Entre ton adresse mail..." autocomplete="email" aria-describedby="authMessage" aria-required="true" />
+        </div>
+
+        <div id="passwordField" class="field">
+          <label for="mdp" class="label">Mot de passe*</label>
+          <input id="mdp" name="mdp" type="password" required minlength="6" class="input" placeholder="Entre ton mot de passe..." autocomplete="current-password" aria-describedby="authMessage" aria-required="true" />
+        </div>
+
+        <button id="forgotLink" type="button" class="forgot">Mot de passe oublie ?</button>
+
+        <div id="termsField" class="terms hidden">
+          <input id="termsAccepted" name="termsAccepted" type="checkbox" aria-describedby="authMessage" aria-required="false" />
+          <label for="termsAccepted">J'accepte les conditions generales d'utilisation*</label>
+        </div>
+
+        <div id="stayConnectedField" class="stay hidden">
+          <input id="stayConnected" name="stayConnected" type="checkbox" checked />
+          <label for="stayConnected">Rester connecte</label>
+        </div>
+
+        <div class="action-row">
+          <button id="submitBtn" type="submit" class="submit">Valider</button>
+        </div>
+      </form>
+
+      <p id="authMessage" class="message" aria-live="polite"></p>
+
+      <p id="toggleLabel" class="bottom-copy">Pas encore de compte ?</p>
+      <button id="toggleMode" type="button" class="bottom-button">Créer un compte</button>
+    </div>
+  </section>
+</main>
+
+<style is:global>
+  .octy-auth-body {
+    margin: 0;
+    min-height: 100%;
+    background: #ffcfa5;
+    color: #1f1a17;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  .octy-auth-body * {
+    box-sizing: border-box;
+  }
+</style>
+
+<style>
+  .auth-page {
+    min-height: 100dvh;
+    background: #ffcfa5;
+  }
+
+  .auth-card {
+    position: relative;
+    width: 100%;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: #ffcfa5;
+  }
+
+  .auth-illustration {
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+  }
+
+  .auth-illustration img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .mode-back {
+    position: absolute;
+    top: clamp(168px, 49.6vw, 214px);
+    left: 36px;
+    z-index: 2;
+    display: inline-flex;
+    width: 46px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .mode-back-icon {
+    display: block;
+    width: 46px;
+    height: 28px;
+    background: #e44d4c;
+    mask: url('/svg/fleche_cours.svg') center / contain no-repeat;
+    transform: rotate(180deg);
+    -webkit-mask: url('/svg/fleche_cours.svg') center / contain no-repeat;
+  }
+
+  .body {
+    padding: 18px 26px 28px;
+    text-align: center;
+  }
+
+  .title {
+    margin: 0 0 22px;
+    color: #e44d4c;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  form {
+    width: min(100%, 322px);
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .field {
+    margin-bottom: 15px;
+  }
+
+  .label {
+    display: block;
+    margin-bottom: 6px;
+    color: #1f1a17;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .input {
+    width: 100%;
+    height: 38px;
+    border: 1.5px solid rgba(228, 77, 76, 0.55);
+    border-radius: 999px;
+    background: transparent;
+    color: #e44d4c;
+    font-size: 0.98rem;
+    outline: none;
+    padding: 0 14px;
+  }
+
+  .input::placeholder {
+    color: rgba(228, 77, 76, 0.55);
+  }
+
+  .input:focus {
+    border-color: #e44d4c;
+  }
+
+  .forgot {
+    display: inline-block;
+    margin-top: -4px;
+    border: 0;
+    background: transparent;
+    color: #e44d4c;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.86rem;
+    line-height: inherit;
+    padding: 0;
+    text-align: left;
+    text-decoration: underline;
+  }
+
+  .terms,
+  .stay {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    color: #e44d4c;
+    font-size: 0.95rem;
+  }
+
+  .terms {
+    margin-top: 14px;
+  }
+
+  .stay {
+    margin-top: 4px;
+  }
+
+  .terms input,
+  .stay input {
+    width: 15px;
+    height: 15px;
+    accent-color: #e44d4c;
+  }
+
+  .action-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+  }
+
+  .submit {
+    width: 151px;
+    height: 45px;
+    border: 0;
+    border-radius: 999px;
+    background: #e44d4c;
+    color: #ffcfa5;
+    cursor: pointer;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 1.28rem;
+    font-weight: 500;
+  }
+
+  .submit:disabled,
+  .bottom-button:disabled,
+  .mode-back:disabled {
+    cursor: wait;
+    opacity: 0.72;
+  }
+
+  .message {
+    min-height: 1.2em;
+    margin: 12px 0 0;
+    font-size: 0.92rem;
+    text-align: center;
+  }
+
+  .bottom-copy {
+    margin: 8px 0;
+    color: #e44d4c;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 1.8rem;
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: 0.03em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .bottom-button {
+    display: block;
+    width: min(310px, 100%);
+    height: 51px;
+    margin: 6px auto 8px;
+    border: 0;
+    border-radius: 999px;
+    background: #e44d4c;
+    color: #ffcfa5;
+    cursor: pointer;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  @media (max-width: 360px) {
+    .body {
+      padding-inline: 22px;
+    }
+
+    .title {
+      font-size: 1.95rem;
+    }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  import { pb, fetchProgressFromPocketBase, syncProgressToPocketBase } from '../js/backend.mjs';
+
+  const form = document.getElementById('authForm');
+  const authMessage = document.getElementById('authMessage');
+  const pageTitle = document.getElementById('pageTitle');
+  const submitBtn = document.getElementById('submitBtn');
+  const toggleMode = document.getElementById('toggleMode');
+  const toggleLabel = document.getElementById('toggleLabel');
+  const modeBack = document.getElementById('modeBack');
+  const nomField = document.getElementById('nomField');
+  const nomLabel = document.getElementById('nomLabel');
+  const passwordField = document.getElementById('passwordField');
+  const forgotLink = document.getElementById('forgotLink');
+  const termsField = document.getElementById('termsField');
+  const termsAccepted = document.getElementById('termsAccepted');
+  const stayConnectedField = document.getElementById('stayConnectedField');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('mdp');
+  const nomInput = document.getElementById('nom');
+
+  const hasAuthElements =
+    form instanceof HTMLFormElement &&
+    authMessage instanceof HTMLElement &&
+    pageTitle instanceof HTMLElement &&
+    submitBtn instanceof HTMLButtonElement &&
+    toggleMode instanceof HTMLButtonElement &&
+    toggleLabel instanceof HTMLElement &&
+    modeBack instanceof HTMLButtonElement &&
+    nomField instanceof HTMLElement &&
+    nomLabel instanceof HTMLElement &&
+    passwordField instanceof HTMLElement &&
+    forgotLink instanceof HTMLButtonElement &&
+    termsField instanceof HTMLElement &&
+    termsAccepted instanceof HTMLInputElement &&
+    stayConnectedField instanceof HTMLElement &&
+    emailInput instanceof HTMLInputElement &&
+    passwordInput instanceof HTMLInputElement &&
+    nomInput instanceof HTMLInputElement;
+
+  if (hasAuthElements) {
+    let authMode = 'login';
+
+  const setMessage = (message, color) => {
+    authMessage.textContent = message;
+    authMessage.style.color = color;
+  };
+
+  const extractPocketBaseError = (error) => {
+    if (!error || typeof error !== 'object') {
+      return 'Erreur inconnue.';
+    }
+
+    const response = error.response;
+    const data = response && typeof response === 'object' ? response.data : null;
+
+    if (data && typeof data === 'object') {
+      for (const value of Object.values(data)) {
+        if (value && typeof value === 'object' && 'message' in value) {
+          return String(value.message);
+        }
+      }
+    }
+
+    if (response && typeof response === 'object' && 'message' in response) {
+      return String(response.message);
+    }
+
+    if ('message' in error) {
+      return String(error.message);
+    }
+
+    return 'Erreur inconnue.';
+  };
+
+  const setBusy = (isBusy) => {
+    submitBtn.disabled = isBusy;
+    toggleMode.disabled = isBusy;
+    modeBack.disabled = isBusy;
+  };
+
+  const getLoginRedirect = () => {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect');
+
+    if (!redirect) {
+      return '/accueil';
+    }
+
+    try {
+      const url = new URL(redirect, window.location.origin);
+      const nextPath = `${url.pathname}${url.search}${url.hash}`;
+
+      if (url.origin !== window.location.origin || nextPath === '/' || nextPath.startsWith('/connexion')) {
+        return '/accueil';
+      }
+
+      return nextPath;
+    } catch {
+      return '/accueil';
+    }
+  };
+
+  const updateMode = () => {
+    nomField.classList.add('hidden');
+    passwordField.classList.remove('hidden');
+    forgotLink.classList.add('hidden');
+    termsField.classList.add('hidden');
+    stayConnectedField.classList.add('hidden');
+    nomInput.required = false;
+    termsAccepted.required = false;
+    passwordInput.required = true;
+    nomInput.setAttribute('aria-required', 'false');
+    termsAccepted.setAttribute('aria-required', 'false');
+    passwordInput.setAttribute('aria-required', 'true');
+    passwordInput.autocomplete = 'current-password';
+
+    if (authMode === 'login') {
+      pageTitle.innerHTML = 'Bon retour<br />parmis nous !';
+      submitBtn.textContent = 'Valider';
+      toggleLabel.textContent = 'Pas encore de compte ?';
+      toggleMode.textContent = 'Créer un compte';
+      modeBack.classList.add('hidden');
+      forgotLink.classList.remove('hidden');
+      nomInput.autocomplete = 'off';
+    } else if (authMode === 'register') {
+      pageTitle.innerHTML = 'Créons un<br />compte !';
+      submitBtn.textContent = 'Valider';
+      toggleLabel.textContent = 'Deja un compte ?';
+      toggleMode.textContent = 'Se connecter';
+      modeBack.classList.remove('hidden');
+      nomField.classList.remove('hidden');
+      termsField.classList.remove('hidden');
+      nomInput.required = true;
+      termsAccepted.required = true;
+      nomInput.setAttribute('aria-required', 'true');
+      termsAccepted.setAttribute('aria-required', 'true');
+      passwordInput.autocomplete = 'new-password';
+      nomInput.autocomplete = 'name';
+      nomLabel.textContent = 'Le nom que tu veux utiliser*';
+      nomInput.placeholder = 'Entre ton nom ou ton pseudonyme...';
+    } else {
+      pageTitle.innerHTML = 'Mot de passe<br />oublie ?';
+      submitBtn.textContent = 'Envoyer';
+      toggleLabel.textContent = 'Tu as retrouve ton mot de passe ?';
+      toggleMode.textContent = 'Se connecter';
+      modeBack.classList.remove('hidden');
+      passwordField.classList.add('hidden');
+      passwordInput.required = false;
+      passwordInput.setAttribute('aria-required', 'false');
+    }
+  };
+
+  const switchMode = (nextMode, options = {}) => {
+    const shouldKeepEmail = Boolean(options.keepEmail);
+    const currentEmail = shouldKeepEmail ? emailInput.value : '';
+    authMode = nextMode;
+    form.reset();
+    if (shouldKeepEmail) {
+      emailInput.value = currentEmail;
+    }
+    setMessage('', '#e44d4c');
+    updateMode();
+  };
+
+  updateMode();
+
+  toggleMode.addEventListener('click', () => {
+    switchMode(authMode === 'login' ? 'register' : 'login');
+  });
+
+  modeBack.addEventListener('click', () => {
+    switchMode('login');
+  });
+
+  forgotLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    switchMode('reset', { keepEmail: true });
+    setMessage('Entre ton email pour recevoir un lien de reinitialisation.', '#e44d4c');
+    emailInput.focus();
+  });
+
+    form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!form.reportValidity()) return;
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    setBusy(true);
+    setMessage(authMode === 'reset' ? 'Envoi du mail...' : 'Chargement...', '#e44d4c');
+
+    let nextPage = getLoginRedirect();
+
+    try {
+      if (authMode === 'reset') {
+        await pb.collection('users').requestPasswordReset(email);
+        setMessage('Si un compte existe, un mail de reinitialisation vient d etre envoye.', '#1f6d14');
+        setBusy(false);
+        return;
+      }
+
+      if (authMode === 'login') {
+        const authData = await pb.collection('users').authWithPassword(email, password);
+        const userId = authData.record.id;
+        localStorage.setItem('userId', userId);
+        localStorage.setItem('octyUserName', authData.record.prenom_nom || authData.record.name || authData.record.username || '');
+        sessionStorage.removeItem('userId');
+
+        // Merge progression PocketBase ↔ localStorage (prend le max, sans bloquer)
+        const mergeProgression = async () => {
+          const xpKey = `octyUserXp:${userId}`;
+          const localLevel = Math.min(16, Math.max(0, Number.parseInt(localStorage.getItem(xpKey) || '0', 10)));
+          const pbProgress = await fetchProgressFromPocketBase(userId);
+          if (!pbProgress) return;
+          const mergedLevel = Math.max(localLevel, pbProgress.level);
+          const mergedXp = Math.max(localLevel, pbProgress.xp);
+          if (mergedLevel > localLevel) localStorage.setItem(xpKey, String(mergedLevel));
+          if (mergedLevel > pbProgress.level || mergedXp > pbProgress.xp) {
+            syncProgressToPocketBase(userId, mergedLevel, mergedXp);
+          }
+        };
+        mergeProgression().catch(() => {});
+
+        setMessage('Connexion reussie !', '#1f6d14');
+      } else {
+        const formData = new FormData(form);
+        const userName = String(formData.get('nom') || '').trim();
+        const createdUser = await pb.collection('users').create({
+          email,
+          password,
+          passwordConfirm: password,
+          prenom_nom: userName,
+          emailVisibility: true,
+        });
+
+        await pb.collection('users').authWithPassword(email, password);
+        localStorage.setItem('userId', createdUser.id);
+        localStorage.setItem('octyUserName', userName);
+        sessionStorage.removeItem('userId');
+        localStorage.setItem('octyEntryQuestionnairePending', 'true');
+        nextPage = '/questionnaire';
+        setMessage('Compte cree avec succes !', '#1f6d14');
+      }
+
+      window.setTimeout(() => {
+        window.location.href = nextPage;
+      }, 900);
+    } catch (error) {
+      setMessage(extractPocketBaseError(error), '#e44d4c');
+      setBusy(false);
+    }
+    });
+  }
+</script>

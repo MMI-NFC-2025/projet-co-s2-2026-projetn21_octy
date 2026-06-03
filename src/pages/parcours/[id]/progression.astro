@@ -1,0 +1,271 @@
+---
+// @ts-nocheck
+import Layout from '../../../layouts/Layout.astro';
+import { getParcours, getEtapesByParcours, getQuizByEtape } from '../../../js/backend.mjs';
+
+const { id } = Astro.params;
+
+const tousLesParcours = await getParcours();
+const parcours = tousLesParcours.find((p) => p.id === id);
+
+if (!parcours) return Astro.redirect('/parcours');
+
+const etapes = await getEtapesByParcours(id);
+const parcoursOrdre = Number(parcours.ordre) || '';
+
+const progressionItems = await Promise.all(
+  etapes.map(async (etape, index) => {
+    const quiz = await getQuizByEtape(etape.id);
+    return {
+      index: index + 1,
+      title: etape.nom_etape,
+      quizId: quiz[0]?.id ?? '',
+      fallbackProgress: 0,
+    };
+  })
+);
+---
+
+<Layout titre={`Progression Parcours ${parcoursOrdre} - Octy`}>
+  <main class="prog-page" data-prog-parcours-id={id}>
+    <header class="prog-hero">
+      <img src="/svg/hero.svg" alt="" aria-hidden="true" class="prog-hero-bg" />
+      <h1 class="prog-hero-title">Progression<br />Parcours {parcoursOrdre}</h1>
+    </header>
+
+    <div class="prog-content">
+      <a href="/profil?tab=progression" class="prog-back" aria-label="Retour a la progression"></a>
+
+      <div class="prog-list">
+        {progressionItems.map((item) => (
+          <article
+            class={`prog-course ${item.fallbackProgress >= 100 ? 'is-complete' : ''}`}
+            data-progress-row
+            data-quiz-id={item.quizId}
+            data-default-progress={item.fallbackProgress}
+          >
+            <h2>{`Cours ${item.index}`}</h2>
+            <p>{item.title}</p>
+            <div class="prog-bar" aria-label={`Progression cours ${item.index}`}>
+              <div class="prog-bar-track">
+                <span class="prog-bar-fill" style={`--course-progress: ${item.fallbackProgress}%`}></span>
+                <strong data-progress-label>{item.fallbackProgress}%</strong>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .prog-page {
+    min-height: calc(100vh - 128px);
+    background: #eb6856;
+    color: #ffcfa5;
+    font-family: 'Source Sans 3', Inter, sans-serif;
+  }
+
+  .prog-hero {
+    position: relative;
+    display: flex;
+    height: 140px;
+    align-items: center;
+    justify-content: center;
+    background: #eb6856;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .prog-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    min-width: 393px;
+    height: 140px;
+    object-fit: fill;
+    pointer-events: none;
+  }
+
+  .prog-hero-title {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: #ffcfa5;
+    font-size: 33px;
+    font-weight: 900;
+    line-height: 34px;
+    text-transform: uppercase;
+  }
+
+  .prog-content {
+    position: relative;
+    background: #eb6856;
+    padding: 72px 0 55px;
+  }
+
+  .prog-back {
+    position: absolute;
+    top: 16px;
+    left: 36px;
+    z-index: 1;
+    display: block;
+    width: 46px;
+    height: 28px;
+    cursor: pointer;
+    background: url('/svg/fleche_cours.svg') center / contain no-repeat;
+    transform: rotate(180deg);
+  }
+
+  .prog-list {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 29px;
+    width: min(314px, calc(100vw - 79px));
+    margin: 0 auto;
+  }
+
+  .prog-course {
+    position: relative;
+    color: #ffcfa5;
+  }
+
+  .prog-course h2 {
+    margin: 0;
+    color: #ffcfa5;
+    font-size: 33px;
+    font-weight: 900;
+    line-height: 36px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .prog-course p {
+    max-width: 270px;
+    margin: 13px 0 0 2px;
+    color: #ffcfa5;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 19px;
+  }
+
+  .prog-bar {
+    display: flex;
+    align-items: center;
+    height: 53px;
+    margin-top: 18px;
+    border-radius: 23px;
+    background: #ffcfa5;
+    padding: 0 12px;
+  }
+
+  .prog-bar-track {
+    position: relative;
+    flex: 1;
+    height: 30px;
+    border: 2px solid #e44d4c;
+    border-radius: 14px;
+    background: #ffcfa5;
+    overflow: hidden;
+  }
+
+  .prog-bar-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--course-progress, 0%);
+    border-radius: 14px;
+    background: #e44d4c;
+    transition: width 240ms ease;
+  }
+
+  .prog-bar strong {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    padding-left: 10px;
+    color: #e44d4c;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .prog-course.is-complete .prog-bar strong {
+    color: #ffcfa5;
+  }
+
+  .prog-course:not(:last-child)::after {
+    display: block;
+    height: 7px;
+    margin-top: 37px;
+    border-radius: 999px;
+    background: #e44d4c;
+    content: "";
+  }
+
+  @media (max-width: 360px) {
+    .prog-list {
+      width: min(302px, calc(100vw - 59px));
+    }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  import { getCurrentUserId, getUserProgress } from '../../../js/progression.mjs';
+  import { getProgressionByParcours } from '../../../js/backend.mjs';
+
+  const root = document.querySelector('[data-prog-parcours-id]');
+
+  if (root instanceof HTMLElement) {
+    const userId = getCurrentUserId('guest');
+    const userProgress = getUserProgress(userId);
+    const parcoursId = root.dataset.progParcoursId;
+
+    const applyProgressRows = (completedQuizzes = []) => {
+      const completed = new Set(completedQuizzes.filter(Boolean).map(String));
+
+      root.querySelectorAll('[data-progress-row]').forEach((row) => {
+        if (!(row instanceof HTMLElement)) return;
+
+        const quizId = row.dataset.quizId;
+        const isComplete = Boolean(quizId && completed.has(quizId));
+        const progress = isComplete ? 100 : 0;
+        const fill = row.querySelector('.prog-bar-fill');
+        const label = row.querySelector('[data-progress-label]');
+
+        row.classList.toggle('is-complete', progress >= 100);
+
+        if (fill instanceof HTMLElement) {
+          fill.style.setProperty('--course-progress', `${progress}%`);
+        }
+
+        if (label) {
+          label.textContent = `${progress}%`;
+        }
+      });
+    };
+
+    applyProgressRows(userProgress.completedQuizzes);
+
+    if (userId && userId !== 'guest' && parcoursId) {
+      getProgressionByParcours(userId, parcoursId)
+        .then((progression) => {
+          if (
+            progression &&
+            Array.isArray(progression.quiz_termines) &&
+            progression.quiz_termines.length > 0
+          ) {
+            applyProgressRows(progression.quiz_termines);
+          }
+        })
+        .catch(() => {});
+    }
+  }
+</script>

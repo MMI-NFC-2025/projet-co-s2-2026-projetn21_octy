@@ -1,0 +1,308 @@
+---
+const {
+  showDivider = true,
+  showMenu = true,
+  homeHref = '/accueil',
+  accueilHref = '/accueil',
+} = Astro.props;
+
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrentHref = (href) => {
+  const normalizedHref = href.replace(/\/$/, '') || '/';
+  if (normalizedHref === '/parcours') {
+    return currentPath === '/parcours' || currentPath.startsWith('/parcours/');
+  }
+  return currentPath === normalizedHref;
+};
+---
+
+<header class="octy-header">
+  <div class="octy-header-inner">
+    <a href={homeHref} class="octy-logo" aria-label="Accueil Octy">
+      <svg width="126" height="33" viewBox="0 0 126 33" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g clip-path="url(#octy_logo_clip)">
+          <path d="M52.4244 33C50.0729 33 47.9104 32.5987 45.9327 31.7961C43.955 30.9936 42.2346 29.8593 40.7795 28.3852C39.3204 26.9151 38.1989 25.1748 37.411 23.1602C36.6232 21.1456 36.2292 18.9262 36.2292 16.502C36.2292 14.0779 36.6473 11.9568 37.4794 9.95856C38.3114 7.9603 39.4651 6.2241 40.9363 4.75407C42.4075 3.28403 44.148 2.14158 46.1578 1.32262C48.1676 0.503663 50.3583 0.0900879 52.738 0.0900879C54.2252 0.0900879 55.6844 0.286638 57.1113 0.679739C58.5383 1.07284 59.8688 1.6584 61.1029 2.42822C62.3369 3.20214 63.4021 4.11937 64.2945 5.17993L59.6558 10.5892C59.0327 9.92171 58.3695 9.34024 57.6701 8.84068C56.9707 8.34111 56.2029 7.9562 55.3708 7.68185C54.5388 7.4075 53.6464 7.27237 52.6937 7.27237C51.5039 7.27237 50.3824 7.49349 49.3253 7.93163C48.2681 8.36978 47.3476 8.99219 46.5598 9.79477C45.7719 10.5973 45.1529 11.576 44.7067 12.7266C44.2605 13.8773 44.0354 15.1671 44.0354 16.5921C44.0354 18.0171 44.2565 19.2497 44.7067 20.388C45.1529 21.5223 45.7759 22.5009 46.5799 23.3199C47.3838 24.1389 48.3565 24.7613 49.5021 25.183C50.6477 25.6089 51.9179 25.8177 53.3168 25.8177C54.2694 25.8177 55.1739 25.6826 56.0381 25.4082C56.9023 25.1339 57.6942 24.7654 58.4258 24.2945C59.1533 23.8236 59.8005 23.2871 60.3673 22.6811L64.0251 28.5899C63.2815 29.4375 62.2927 30.1951 61.0586 30.8625C59.8246 31.53 58.4539 32.05 56.9546 32.4308C55.4512 32.8075 53.9439 33 52.4244 33Z" fill="#FFCFA5"/>
+          <path d="M75.9835 32.5454V7.5466H66.7021V0.72876H93.0711V7.5466H83.5686V32.5454H75.9835Z" fill="#FFCFA5"/>
+          <path d="M106.947 32.5454V16.6821L107.26 18.9097L94.6348 0.72876H103.245L112.884 14.819L108.957 14.6838L117.655 0.72876H126L113.909 19.4092L114.58 16.3177V32.5454H106.951H106.947Z" fill="#FFCFA5"/>
+          <path d="M31.1642 9.90942C30.3764 7.91116 29.2509 6.16677 27.7958 4.68036C26.3366 3.19804 24.6283 2.04331 22.6667 1.22435C20.7051 0.405385 18.5465 0 16.195 0C13.8435 0 11.689 0.40948 9.72341 1.22844C7.76182 2.0474 6.04945 3.19804 4.59433 4.68445C3.1352 6.17087 2.00568 7.91116 1.20175 9.91351C0.397815 11.9118 -0.00415039 14.1107 -0.00415039 16.502C-0.00415039 18.8934 0.397815 21.0923 1.20175 23.0947C2.00568 25.0929 3.1352 26.8373 4.59433 28.3196C6.04945 29.8061 7.76182 30.9567 9.72341 31.7757C11.685 32.5946 13.8596 33.0041 16.2393 33.0041C18.6189 33.0041 20.7011 32.5946 22.6627 31.7757C24.6243 30.9567 26.3366 29.8061 27.7917 28.3196C29.2469 26.8373 30.3724 25.0848 31.1602 23.0701C31.9481 21.0555 32.342 18.8647 32.342 16.502C32.342 14.1393 31.9481 11.9118 31.1602 9.91351L31.1642 9.90942ZM23.8645 23.6966C23.5389 23.6966 23.2254 23.6516 22.928 23.5615C22.928 23.6065 22.928 23.6516 22.928 23.6966C22.928 25.5966 21.4126 27.1403 19.5474 27.1403C17.6823 27.1403 16.1669 25.5966 16.1669 23.6966C16.1669 25.5966 14.6515 27.1403 12.7864 27.1403C10.9213 27.1403 9.40585 25.5966 9.40585 23.6966C9.40585 23.6516 9.40585 23.6065 9.40585 23.5656C9.1084 23.6516 8.79487 23.6966 8.4733 23.6966C6.60416 23.6966 5.09277 22.1529 5.09277 20.2529C5.09277 18.6354 6.18611 17.2801 7.66535 16.9115C7.50054 16.2277 7.41211 15.5152 7.41211 14.7822C7.41211 9.85619 11.3313 5.86376 16.1669 5.86376C21.0025 5.86376 24.9217 9.85619 24.9217 14.7822C24.9217 15.5152 24.8333 16.2318 24.6685 16.9115C26.1437 17.2801 27.241 18.6354 27.241 20.2529C27.241 22.157 25.7256 23.6966 23.8605 23.6966H23.8645Z" fill="#FFCFA5"/>
+        </g>
+        <defs>
+          <clipPath id="octy_logo_clip">
+            <rect width="126" height="33" fill="white"/>
+          </clipPath>
+        </defs>
+      </svg>
+    </a>
+
+    {showMenu ? (
+      <div class="octy-header-actions">
+        <a href="/premium" class="octy-crown-link" aria-label="Passer a Octy Premium">
+          <img src="/svg/crown.svg" alt="" aria-hidden="true" class="octy-crown" />
+        </a>
+        <button
+          id="menu-toggle"
+          type="button"
+          aria-label="Ouvrir le menu"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="octy-menu-toggle"
+        >
+          <svg width="33" height="24" viewBox="0 0 33 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M13 12.352H33" stroke="#FFCFA5" stroke-width="2"/>
+            <path d="M0 22.672H33" stroke="#FFCFA5" stroke-width="2"/>
+            <path d="M0 1H33" stroke="#FFCFA5" stroke-width="2"/>
+          </svg>
+        </button>
+      </div>
+    ) : (
+      <a href="/premium" class="octy-crown-link" aria-label="Passer a Octy Premium">
+        <img src="/svg/crown.svg" alt="" aria-hidden="true" class="octy-crown" />
+      </a>
+    )}
+  </div>
+
+  {showDivider && <div class="octy-header-divider"></div>}
+</header>
+
+{showMenu && (
+<div id="mobile-menu" class="octy-mobile-menu" aria-hidden="true">
+  <div class="octy-header-inner">
+    <a href={homeHref} class="octy-logo" aria-label="Accueil Octy" data-menu-link>
+      <svg width="126" height="33" viewBox="0 0 126 33" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g clip-path="url(#octy_menu_logo_clip)">
+          <path d="M52.4244 33C50.0729 33 47.9104 32.5987 45.9327 31.7961C43.955 30.9936 42.2346 29.8593 40.7795 28.3852C39.3204 26.9151 38.1989 25.1748 37.411 23.1602C36.6232 21.1456 36.2292 18.9262 36.2292 16.502C36.2292 14.0779 36.6473 11.9568 37.4794 9.95856C38.3114 7.9603 39.4651 6.2241 40.9363 4.75407C42.4075 3.28403 44.148 2.14158 46.1578 1.32262C48.1676 0.503663 50.3583 0.0900879 52.738 0.0900879C54.2252 0.0900879 55.6844 0.286638 57.1113 0.679739C58.5383 1.07284 59.8688 1.6584 61.1029 2.42822C62.3369 3.20214 63.4021 4.11937 64.2945 5.17993L59.6558 10.5892C59.0327 9.92171 58.3695 9.34024 57.6701 8.84068C56.9707 8.34111 56.2029 7.9562 55.3708 7.68185C54.5388 7.4075 53.6464 7.27237 52.6937 7.27237C51.5039 7.27237 50.3824 7.49349 49.3253 7.93163C48.2681 8.36978 47.3476 8.99219 46.5598 9.79477C45.7719 10.5973 45.1529 11.576 44.7067 12.7266C44.2605 13.8773 44.0354 15.1671 44.0354 16.5921C44.0354 18.0171 44.2565 19.2497 44.7067 20.388C45.1529 21.5223 45.7759 22.5009 46.5799 23.3199C47.3838 24.1389 48.3565 24.7613 49.5021 25.183C50.6477 25.6089 51.9179 25.8177 53.3168 25.8177C54.2694 25.8177 55.1739 25.6826 56.0381 25.4082C56.9023 25.1339 57.6942 24.7654 58.4258 24.2945C59.1533 23.8236 59.8005 23.2871 60.3673 22.6811L64.0251 28.5899C63.2815 29.4375 62.2927 30.1951 61.0586 30.8625C59.8246 31.53 58.4539 32.05 56.9546 32.4308C55.4512 32.8075 53.9439 33 52.4244 33Z" fill="#FFCFA5"/>
+          <path d="M75.9835 32.5454V7.5466H66.7021V0.72876H93.0711V7.5466H83.5686V32.5454H75.9835Z" fill="#FFCFA5"/>
+          <path d="M106.947 32.5454V16.6821L107.26 18.9097L94.6348 0.72876H103.245L112.884 14.819L108.957 14.6838L117.655 0.72876H126L113.909 19.4092L114.58 16.3177V32.5454H106.951H106.947Z" fill="#FFCFA5"/>
+          <path d="M31.1642 9.90942C30.3764 7.91116 29.2509 6.16677 27.7958 4.68036C26.3366 3.19804 24.6283 2.04331 22.6667 1.22435C20.7051 0.405385 18.5465 0 16.195 0C13.8435 0 11.689 0.40948 9.72341 1.22844C7.76182 2.0474 6.04945 3.19804 4.59433 4.68445C3.1352 6.17087 2.00568 7.91116 1.20175 9.91351C0.397815 11.9118 -0.00415039 14.1107 -0.00415039 16.502C-0.00415039 18.8934 0.397815 21.0923 1.20175 23.0947C2.00568 25.0929 3.1352 26.8373 4.59433 28.3196C6.04945 29.8061 7.76182 30.9567 9.72341 31.7757C11.685 32.5946 13.8596 33.0041 16.2393 33.0041C18.6189 33.0041 20.7011 32.5946 22.6627 31.7757C24.6243 30.9567 26.3366 29.8061 27.7917 28.3196C29.2469 26.8373 30.3724 25.0848 31.1602 23.0701C31.9481 21.0555 32.342 18.8647 32.342 16.502C32.342 14.1393 31.9481 11.9118 31.1602 9.91351L31.1642 9.90942ZM23.8645 23.6966C23.5389 23.6966 23.2254 23.6516 22.928 23.5615C22.928 23.6065 22.928 23.6516 22.928 23.6966C22.928 25.5966 21.4126 27.1403 19.5474 27.1403C17.6823 27.1403 16.1669 25.5966 16.1669 23.6966C16.1669 25.5966 14.6515 27.1403 12.7864 27.1403C10.9213 27.1403 9.40585 25.5966 9.40585 23.6966C9.40585 23.6516 9.40585 23.6065 9.40585 23.5656C9.1084 23.6516 8.79487 23.6966 8.4733 23.6966C6.60416 23.6966 5.09277 22.1529 5.09277 20.2529C5.09277 18.6354 6.18611 17.2801 7.66535 16.9115C7.50054 16.2277 7.41211 15.5152 7.41211 14.7822C7.41211 9.85619 11.3313 5.86376 16.1669 5.86376C21.0025 5.86376 24.9217 9.85619 24.9217 14.7822C24.9217 15.5152 24.8333 16.2318 24.6685 16.9115C26.1437 17.2801 27.241 18.6354 27.241 20.2529C27.241 22.157 25.7256 23.6966 23.8605 23.6966H23.8645Z" fill="#FFCFA5"/>
+        </g>
+        <defs>
+          <clipPath id="octy_menu_logo_clip">
+            <rect width="126" height="33" fill="white"/>
+          </clipPath>
+        </defs>
+      </svg>
+    </a>
+
+    <button id="menu-close" type="button" aria-label="Fermer le menu" class="octy-menu-close">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5 5L23 23" stroke="#FFCFA5" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M23 5L5 23" stroke="#FFCFA5" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="octy-header-divider"></div>
+
+  <nav class="octy-mobile-nav" aria-label="Navigation principale">
+    <a href={accueilHref} aria-current={isCurrentHref(accueilHref) ? 'page' : undefined} data-menu-link>Accueil</a>
+    <a href="/parcours" aria-current={isCurrentHref('/parcours') ? 'page' : undefined} data-menu-link>Explorer</a>
+    <a href="/carte" aria-current={isCurrentHref('/carte') ? 'page' : undefined} data-menu-link>Carte</a>
+    <a href="/profil" aria-current={isCurrentHref('/profil') ? 'page' : undefined} data-menu-link>Profil</a>
+    <a href="/premium" aria-current={isCurrentHref('/premium') ? 'page' : undefined} data-menu-link>Premium</a>
+    <a href="/a-propos" aria-current={isCurrentHref('/a-propos') ? 'page' : undefined} data-menu-link>&Agrave; propos</a>
+  </nav>
+
+  <div class="octy-menu-wave-wrapper">
+    <svg width="444" height="219" viewBox="0 0 444 219" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M386.649 62.452c-12.909 0-24.805-3.62-34.363-9.72-1.637-1.054-3.221-2.173-4.702-3.38-9.532-6.1-21.428-9.721-34.285-9.721-4.572 0-9.039.46-13.299 1.338a62.111 62.111 0 00-13.221 4.191 63.707 63.707 0 01-4.026 1.997 69.437 69.437 0 01-11.039 3.906c-6.052 1.624-12.519 2.48-19.195 2.48-17.974 0-34.233-6.254-45.87-16.326-2-1.756-3.87-3.599-5.584-5.53a97.248 97.248 0 00-3.299-2.919C176.727 10.994 147.688 0 115.61 0 72.338 0 34.597 19.99 14.65 49.659c.051-.22.155-.417.233-.636a40.145 40.145 0 00-1.402 2.172 54.395 54.395 0 00-1.221 1.997c-.104.176-.208.33-.312.505-.312.526-.597 1.053-.909 1.58-.13.22-.26.46-.364.68a33.994 33.994 0 00-1.013 1.909 58.54 58.54 0 00-.909 1.8c-.182.329-.337.658-.493 1.009-.182.395-.39.812-.572 1.25-.156.308-.285.615-.415.922-.234.483-.442.966-.624 1.449-.13.285-.26.592-.363.877a9.148 9.148 0 00-.416 1.076 17.49 17.49 0 00-.623 1.602c-.052.11-.078.219-.13.329-.234.614-.442 1.25-.65 1.865-.13.33-.233.636-.311.965-.156.44-.312.9-.442 1.339a68.854 68.854 0 00-.65 2.172c-.155.615-.337 1.251-.467 1.866-.078.197-.103.373-.155.57-.104.373-.182.768-.286 1.141-.104.44-.208.9-.312 1.36-.182.835-.338 1.69-.493 2.524 0 .044-.026.088-.026.11v.088a34.432 34.432 0 00-.39 2.348v.088l-.078.614a41.107 41.107 0 00-.26 1.865c-.13 1.141-.26 2.282-.337 3.424a78.396 78.396 0 00-.26 6.56V219h443.532V90.519l.39-54.685.052-7.483v-.197s.026-.132.026-.198v-1.623a57.932 57.932 0 01-2.312 5.31 50.348 50.348 0 001.844-4.323c0-.066-.026-.131-.026-.175a63.103 63.103 0 00-.259-2.239c-.104-.79-.234-1.558-.364-2.348-4.649 22.668-28.052 39.894-56.208 39.894h-.026z" fill="#FFCFA5"/>
+    </svg>
+    <div class="octy-menu-cream-fill"></div>
+  </div>
+</div>
+)}
+
+<style>
+  .octy-header {
+    position: relative;
+    z-index: 40;
+    background: #e44d4c;
+  }
+
+  .octy-header-inner {
+    display: flex;
+    height: 126px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 31px 38px 0;
+  }
+
+  .octy-logo {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+
+  .octy-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex: 0 0 auto;
+  }
+
+  .octy-crown {
+    width: 37px;
+    height: 35px;
+  }
+
+  .octy-crown-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+  }
+
+  .octy-menu-toggle,
+  .octy-menu-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    color: #ffcfa5;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .octy-menu-toggle {
+    width: 33px;
+    height: 24px;
+  }
+
+  .octy-menu-close {
+    width: 44px;
+    height: 44px;
+  }
+
+  .octy-header-divider {
+    height: 2px;
+    background: #ffcfa5;
+  }
+
+  .octy-mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: flex;
+    flex-direction: column;
+    background: #e44d4c;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: opacity 220ms ease, transform 220ms ease;
+  }
+
+  .octy-menu-wave-wrapper {
+    margin-top: auto;
+    flex-shrink: 0;
+    transform: translateY(80px);
+  }
+
+  .octy-menu-wave-wrapper svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .octy-menu-cream-fill {
+    background: #FFCFA5;
+    height: 100vh;
+  }
+
+  .octy-mobile-menu.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .octy-mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 44px 38px;
+  }
+
+  .octy-mobile-nav a {
+    color: #ffcfa5;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 32px;
+    text-decoration: none;
+  }
+
+  @media (max-width: 360px) {
+    .octy-header-inner {
+      padding-inline: 30px;
+    }
+
+    .octy-header-actions {
+      gap: 18px;
+    }
+  }
+</style>
+
+{showMenu && (
+<script is:inline>
+  // @ts-nocheck
+  (() => {
+    const menu = document.getElementById('mobile-menu');
+    const openButton = document.getElementById('menu-toggle');
+    const closeButton = document.getElementById('menu-close');
+    const menuLinks = menu?.querySelectorAll('[data-menu-link]') ?? [];
+    const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    let previousFocus = null;
+
+    if (!menu || !openButton || !closeButton) return;
+
+    const setOpen = (open) => {
+      if (open) {
+        previousFocus = document.activeElement;
+      }
+
+      menu.classList.toggle('is-open', open);
+      menu.setAttribute('aria-hidden', open ? 'false' : 'true');
+      openButton.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.body.style.overflow = open ? 'hidden' : '';
+
+      if (open) {
+        closeButton.focus();
+      } else {
+        const focusTarget = previousFocus instanceof HTMLElement ? previousFocus : openButton;
+        focusTarget.focus();
+      }
+    };
+
+    openButton.addEventListener('click', () => setOpen(true));
+    closeButton.addEventListener('click', () => setOpen(false));
+
+    menuLinks.forEach((link) => {
+      link.addEventListener('click', () => setOpen(false));
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const isOpen = menu.getAttribute('aria-hidden') === 'false';
+
+      if (event.key === 'Escape' && isOpen) {
+        setOpen(false);
+      }
+
+      if (event.key === 'Tab' && isOpen) {
+        const focusableElements = Array.from(menu.querySelectorAll(focusableSelector));
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (!firstElement || !lastElement) return;
+
+        if (event.shiftKey && document.activeElement === firstElement) {
+          event.preventDefault();
+          lastElement.focus();
+        } else if (!event.shiftKey && document.activeElement === lastElement) {
+          event.preventDefault();
+          firstElement.focus();
+        }
+      }
+    });
+  })();
+</script>
+)}

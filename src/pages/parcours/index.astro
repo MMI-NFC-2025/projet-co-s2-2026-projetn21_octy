@@ -1,0 +1,415 @@
+---
+// @ts-nocheck
+import Layout from '../../layouts/Layout.astro';
+import CourseLoadingScreen from '../../components/CourseLoadingScreen.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getParcours, getEtapesByParcours } from '../../js/backend.mjs';
+
+const tousLesParcours = await getParcours();
+
+const parcoursAvecEtapes = await Promise.all(
+  tousLesParcours.map(async (p, i) => ({
+    ...p,
+    index: i + 1,
+    etapes: p.statut === 'payant' ? [] : await getEtapesByParcours(p.id),
+  }))
+);
+
+const parcoursGratuits = parcoursAvecEtapes.filter((p) => p.statut !== 'payant');
+const parcoursPremium = parcoursAvecEtapes.filter((p) => p.statut === 'payant');
+---
+
+<Layout titre="Parcours — Octy">
+  <main class="parcours-page">
+    <PageHero title="Explorer les<br />parcours" />
+    <section class="free-section" aria-label="Parcours gratuits">
+      <div class="parcours-stack">
+        {parcoursGratuits.map((p, cardIndex) => (
+          <details class="accordion-card" open={cardIndex === 0}>
+            <summary
+              class="accordion-header"
+            >
+              <span class="card-copy">
+                <span class="card-title">Parcours {p.index}</span>
+                <span class="card-description">{p.nom_parcours}</span>
+              </span>
+
+              <img
+                src="/svg/fleche.svg"
+                alt=""
+                aria-hidden="true"
+                class="header-icon accordion-arrow"
+              />
+            </summary>
+
+            <div class="card-bg-css" aria-hidden="true"></div>
+            <img
+              src="/svg/fond_card.svg"
+              alt=""
+              aria-hidden="true"
+              class="card-bg-svg"
+              loading="lazy"
+            />
+
+            <div class="accordion-content-wrap">
+              <hr class="course-divider" />
+
+              <div class="accordion-content">
+                {p.etapes.map((e, j) => (
+                  <a href={`/parcours/${p.id}/etape/${e.id}`} class="course-link" data-course-loading-link>
+                    <img src="/svg/fleche.svg" alt="" aria-hidden="true" class="course-icon" loading="lazy" />
+                    <span>
+                      <span class="course-title">Cours {j + 1}</span>
+                      <span class="course-description">{e.nom_etape}</span>
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <div class="transition-wave" aria-hidden="true">
+      <img src="/svg/fond_bas_page.svg" alt="" aria-hidden="true" class="w-full" loading="lazy" />
+    </div>
+
+    <section class="premium-section" aria-label="Parcours premium">
+      <h2 class="premium-title">
+        Découvrez nos parcours prémiums&nbsp;!
+      </h2>
+
+      <div class="premium-stack">
+        {parcoursPremium.map((p) => (
+          <article class="premium-card">
+            <span class="premium-copy">
+              <span class="premium-card-title">Parcours {p.index}</span>
+              <span class="premium-card-description">{p.nom_parcours || 'Description'}</span>
+            </span>
+
+            <img src="/svg/lock.svg" alt="" aria-hidden="true" class="lock-icon" loading="lazy" />
+          </article>
+        ))}
+      </div>
+
+      <a href="/premium" class="premium-cta">
+        <img src="/svg/arrow_button.svg" alt="" aria-hidden="true" class="cta-arrow" loading="lazy" />
+        <span>Passer à Octy Premium</span>
+      </a>
+    </section>
+  </main>
+
+  <CourseLoadingScreen />
+</Layout>
+
+<style>
+  .parcours-page {
+    min-height: 100vh;
+    background: #eb6856;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  .free-section {
+    background: #eb6856;
+    padding: 28px 0 84px;
+  }
+
+  .parcours-stack,
+  .premium-stack,
+  .premium-cta {
+    width: min(315px, calc(100vw - 78px));
+    margin-inline: auto;
+  }
+
+  .parcours-stack,
+  .premium-stack {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .parcours-stack {
+    gap: 28px;
+  }
+
+  .accordion-card {
+    position: relative;
+    min-height: 116px;
+    border-radius: 20px;
+    background: #ffcfa5;
+    color: #e44d4c;
+  }
+
+  .accordion-card[open] {
+    min-height: 392px;
+    margin-bottom: 6px;
+    background: transparent;
+  }
+
+  .card-bg-css,
+  .card-bg-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-bg-css {
+    background: #ffcfa5;
+    border-radius: 20px;
+  }
+
+  .card-bg-svg {
+    display: none;
+    object-fit: fill;
+  }
+
+  .accordion-card[open] .card-bg-css {
+    display: none;
+  }
+
+  .accordion-card[open] .card-bg-svg {
+    display: block;
+  }
+
+  .accordion-header,
+  .accordion-content-wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  .accordion-content-wrap {
+    padding: 0 20px 18px 21px;
+  }
+
+  .accordion-body {
+    padding: 23px 20px 18px 21px;
+  }
+
+  .accordion-header {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 23px 20px 0 21px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    list-style: none;
+  }
+
+  .accordion-header::-webkit-details-marker {
+    display: none;
+  }
+
+  .card-copy,
+  .premium-copy,
+  .course-link span {
+    display: block;
+  }
+
+  .card-title,
+  .card-description,
+  .course-title,
+  .course-description,
+  .premium-card-title,
+  .premium-card-description {
+    display: block;
+    letter-spacing: 0;
+  }
+
+  .card-title {
+    margin: 0 0 6px;
+    color: #e44d4c;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 24px;
+    text-transform: uppercase;
+  }
+
+  .card-description {
+    max-width: 222px;
+    color: #f15d57;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 17px;
+  }
+
+  .header-icon {
+    flex: 0 0 auto;
+    fill: #e44d4c;
+  }
+
+  .accordion-arrow {
+    width: 30px;
+    height: 34px;
+    margin-top: 21px;
+    transition: transform 180ms ease;
+  }
+
+  .accordion-card[open] .accordion-arrow {
+    transform: rotate(90deg);
+  }
+
+  .course-divider {
+    margin: 30px 0 18px;
+    border: 0;
+    border-top: 2px solid #e44d4c;
+  }
+
+  .accordion-content {
+    display: block;
+  }
+
+  .accordion-card:not([open]) .course-divider,
+  .accordion-card:not([open]) .accordion-content {
+    display: none;
+  }
+
+  .course-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin-bottom: 13px;
+    color: #f15d57;
+    text-decoration: none;
+  }
+
+  .course-link:last-child {
+    margin-bottom: 0;
+  }
+
+  .course-icon {
+    width: 13px;
+    height: 15px;
+    margin-top: 4px;
+    flex: 0 0 auto;
+  }
+
+  .course-title {
+    color: #f15d57;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 19px;
+    text-transform: uppercase;
+  }
+
+  .course-description {
+    margin-top: 2px;
+    color: #f15d57;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 15px;
+  }
+
+  .transition-wave {
+    height: 33px;
+    overflow: hidden;
+    background: #eb6856;
+  }
+
+  .transition-wave img {
+    display: block;
+    width: 100%;
+    min-width: 393px;
+    height: auto;
+  }
+
+  .premium-section {
+    background: #ffcfa5;
+    padding: 33px 0 40px;
+  }
+
+  .premium-title {
+    width: min(315px, calc(100vw - 78px));
+    margin: 0 auto 35px;
+    color: #e44d4c;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 31px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .premium-stack {
+    gap: 23px;
+  }
+
+  .premium-card {
+    display: flex;
+    min-height: 117px;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-radius: 18px;
+    background: #d7c9bd;
+    padding: 23px 24px 20px 21px;
+  }
+
+  .premium-card-title {
+    margin: 0 0 9px;
+    color: #787878;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 24px;
+    text-transform: uppercase;
+  }
+
+  .premium-card-description {
+    max-width: 210px;
+    color: #787878;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 17px;
+  }
+
+  .lock-icon {
+    width: 27px;
+    height: 36px;
+    margin-top: 22px;
+    flex: 0 0 auto;
+  }
+
+  .premium-cta {
+    display: flex;
+    height: 60px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    border: 0;
+    border-radius: 11px;
+    background: #e44d4c;
+    color: #ffcfa5;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 20px;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .cta-arrow {
+    width: 33px;
+    height: 14px;
+    flex: 0 0 auto;
+  }
+</style>
+
+<script>
+// @ts-nocheck
+document.querySelectorAll('.accordion-card').forEach((card) => {
+  card.addEventListener('toggle', () => {
+    if (!card.open) return;
+
+    document.querySelectorAll('.accordion-card').forEach((otherCard) => {
+      if (otherCard !== card) {
+        otherCard.open = false;
+      }
+    });
+  });
+});
+</script>

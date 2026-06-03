@@ -1,0 +1,740 @@
+---
+import '../styles/global.css';
+
+const questions = [
+  {
+    id: 'situation',
+    title: 'QUESTION 1',
+    subtitle: 'Situation r&eacute;elle',
+    prompt: 'Quelle situation te d&eacute;crit le mieux ?',
+    mascot: '/svg/octy-neutral.svg',
+    mascotClass: '',
+    progress: '16.67%',
+    answers: [
+      { value: 'chercher_logement', label: 'Chercher ou<br />prendre un logement' },
+      { value: 'gerer_caf', label: 'Contacter ou<br />g&eacute;rer la CAF' },
+      { value: 'dossier_administratif', label: 'Remplir un<br />dossier administratif' },
+      { value: 'budget', label: 'G&eacute;rer mon<br />budget' },
+    ],
+  },
+  {
+    id: 'experience',
+    title: 'QUESTION 2',
+    subtitle: 'Exp&eacute;rience administrative',
+    prompt: 'As-tu d&eacute;j&agrave; fait une d&eacute;marche administrative seul(e) ?',
+    mascot: '/svg/octystudieux.svg',
+    mascotClass: 'is-studious',
+    progress: '33.33%',
+    answers: [
+      { value: 'plusieurs_fois', label: 'Oui, plusieurs<br />fois' },
+      { value: 'une_fois', label: 'Oui, une fois' },
+      { value: 'jamais', label: 'Non, jamais' },
+      { value: 'avec_aide', label: 'Oui, mais<br />avec de l&rsquo;aide<br />(famille,<br />proches..)' },
+    ],
+  },
+  {
+    id: 'vision',
+    title: 'QUESTION 3',
+    subtitle: 'Vision du syst&egrave;me',
+    prompt: 'Pour toi, l&rsquo;administration sert surtout &agrave; :',
+    mascot: '/svg/octy-neutral.svg',
+    mascotClass: '',
+    progress: '50%',
+    answers: [
+      { value: 'aides', label: 'Donner des<br />aides' },
+      { value: 'droits', label: 'Prot&eacute;ger les<br />droits' },
+      { value: 'verifier_aides', label: 'V&eacute;rifier mes<br />aides<br />possibles' },
+      { value: 'argent', label: 'G&eacute;rer l&rsquo;argent' },
+    ],
+  },
+  {
+    id: 'stress',
+    title: 'QUESTION 4',
+    subtitle: 'Principal stress',
+    prompt: 'Ce qui te stresse le plus dans ces d&eacute;marches :',
+    mascot: '/svg/octy-neutral.svg',
+    mascotClass: '',
+    progress: '66.67%',
+    answers: [
+      { value: 'commencer', label: 'Ne pas savoir<br />par o&ugrave;<br />commencer' },
+      { value: 'erreur_caf', label: '&Eacute;viter une<br />erreur avec la<br />CAF' },
+      { value: 'comprendre_demande', label: 'Comprendre<br />ce qu&rsquo;on me<br />demande' },
+      { value: 'gerer_budget', label: 'G&eacute;rer mon<br />budget' },
+    ],
+  },
+  {
+    id: 'prochain_mois',
+    title: 'QUESTION 5',
+    subtitle: 'Prochain mois',
+    prompt: 'Dans le mois &agrave; venir, tu comptes :',
+    mascot: '/svg/octystudieux.svg',
+    mascotClass: 'is-studious',
+    progress: '83.33%',
+    answers: [
+      { value: 'aide_logement', label: 'Chercher une<br />aide pour le<br />logement' },
+      { value: 'suivre_caf', label: 'Suivre un<br />dossier CAF' },
+      { value: 'remplir_dossier', label: 'Remplir un<br />dossier administratif' },
+      { value: 'ajuster_budget', label: 'Ajuster ton<br />budget' },
+    ],
+  },
+  {
+    id: 'comprehension',
+    title: 'QUESTION 6',
+    subtitle: 'Niveau de compr&eacute;hension',
+    prompt: 'Comment te sens-tu face aux d&eacute;marches administratives ?',
+    mascot: '/svg/octy-neutral.svg',
+    mascotClass: '',
+    progress: '100%',
+    answers: [
+      { value: 'comprends_bien', label: 'Je comprends<br />bien' },
+      { value: 'comprends_partiellement', label: 'Je comprends<br />partiellement' },
+      { value: 'comprends_peu', label: 'Je comprends<br />peu' },
+      { value: 'perdu', label: 'Je me sens<br />perdu(e)' },
+    ],
+  },
+];
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Questionnaire d'entree - Octy</title>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="entry-body">
+    <main class="entry-screen" data-entry-questionnaire aria-label="Questionnaire d'entree Octy">
+      <p class="sr-only" data-entry-status aria-live="polite"></p>
+
+      <section class="entry-step entry-intro is-active" data-step="intro" aria-labelledby="entry-intro-title">
+        <img src="/svg/vagues.svg" alt="" class="entry-waves" aria-hidden="true" />
+
+        <div class="entry-top entry-top-intro">
+          <h1 id="entry-intro-title">
+            Tout d&rsquo;abord, nous allons commencer par un court questionnaire qui nous permettra de mieux te guider dans l&rsquo;application et de te proposer un parcours adapt&eacute; &agrave; tes besoins
+          </h1>
+        </div>
+
+        <svg class="entry-bolt" viewBox="0 105 121 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M68.3728 299.812L50.4213 322.352L3.33786e-06 225.5L0 113L13.3674 105L54.1803 271.369L71.3647 251.512L121 405L68.3728 299.812Z" fill="#FFCFA5"/>
+        </svg>
+
+        <div class="entry-mascot-layer entry-intro-mascot" aria-hidden="true">
+          <img src="/svg/octy-neutral.svg" alt="" class="entry-mascot" />
+        </div>
+
+        <button type="button" class="entry-next" data-next aria-label="Commencer le questionnaire">
+          <img src="/svg/fleche_cours.svg" alt="" aria-hidden="true" />
+        </button>
+      </section>
+
+      {
+        questions.map((question, questionIndex) => (
+          <section class="entry-step entry-question" data-step="question" data-question={question.id} aria-labelledby={`${question.id}-title`} aria-describedby={`${question.id}-progress-status`}>
+            <img src="/svg/vagues.svg" alt="" class="entry-waves" aria-hidden="true" />
+
+            <div class="entry-question-panel">
+              <div class="entry-question-content">
+                <h2 id={`${question.id}-title`} class="entry-question-title" set:html={question.title}></h2>
+                <p class="entry-question-subtitle" set:html={question.subtitle}></p>
+                <p id={`${question.id}-prompt`} class="entry-question-prompt" set:html={question.prompt}></p>
+                <p id={`${question.id}-progress-status`} class="sr-only">Question {questionIndex + 1} sur {questions.length}</p>
+                <div class="entry-answer-grid" role="radiogroup" aria-labelledby={`${question.id}-prompt`} aria-describedby={`${question.id}-progress-status`}>
+                  {question.answers.map((answer) => (
+                    <button type="button" class="entry-answer" data-answer={answer.value} role="radio" aria-checked="false">
+                      <span set:html={answer.label}></span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div class={`entry-question-mascot-layer ${question.mascotClass}`} aria-hidden="true">
+              <img src={question.mascot} alt="" class="entry-mascot" />
+            </div>
+
+            <button type="button" class="entry-next" data-next aria-label="Question suivante">
+              <img src="/svg/fleche_cours.svg" alt="" aria-hidden="true" />
+            </button>
+
+            <div class="entry-progress" aria-hidden="true">
+              <span style={`--progress: ${question.progress}`}></span>
+            </div>
+          </section>
+        ))
+      }
+
+      <section class="entry-step entry-finish" data-step="finish" aria-labelledby="entry-finish-title">
+        <img src="/svg/vagues.svg" alt="" class="entry-waves" aria-hidden="true" />
+
+        <div class="entry-progress entry-progress-top" aria-hidden="true">
+          <span style="--progress: 100%"></span>
+        </div>
+
+        <div class="entry-top entry-top-finish">
+          <h2 id="entry-finish-title">
+            Bravo ! tu viens de terminer le questionnaire. D&eacute;sormais, nous allons pouvoir te guider et te proposer un parcours adapt&eacute; &agrave; tes besoins.
+          </h2>
+        </div>
+
+        <svg class="entry-bolt" viewBox="0 105 121 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M68.3728 299.812L50.4213 322.352L3.33786e-06 225.5L0 113L13.3674 105L54.1803 271.369L71.3647 251.512L121 405L68.3728 299.812Z" fill="#FFCFA5"/>
+        </svg>
+
+        <div class="entry-mascot-layer entry-finish-mascot" aria-hidden="true">
+          <img src="/svg/octy-neutral.svg" alt="" class="entry-mascot" />
+        </div>
+
+        <button type="button" class="entry-next" data-next aria-label="Aller a l'accueil">
+          <img src="/svg/fleche_cours.svg" alt="" aria-hidden="true" />
+        </button>
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(html),
+  :global(body) {
+    margin: 0;
+    min-height: 100%;
+    background: #eb6856;
+  }
+
+  .entry-body {
+    min-height: 100dvh;
+    margin: 0;
+    background: #eb6856;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  .entry-screen {
+    position: relative;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: #eb6856;
+    background-image: none;
+    isolation: isolate;
+  }
+
+  .entry-screen::before,
+  .entry-screen::after {
+    display: none;
+    content: none;
+  }
+
+  .entry-step {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: none;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .entry-step.is-active {
+    display: block;
+  }
+
+  .entry-top {
+    position: absolute;
+    left: 50%;
+    z-index: 2;
+    width: max(430px, 112vw);
+    border-radius: 0 0 50% 50% / 0 0 22% 22%;
+    background: #ffcfa5;
+    transform: translateX(-50%);
+  }
+
+  .entry-top-intro {
+    top: 0;
+    height: clamp(372px, 46dvh, 394px);
+  }
+
+  .entry-top-intro h1,
+  .entry-top-finish h2 {
+    width: min(320px, calc(100vw - 72px));
+    margin: 0 auto;
+    color: #e44d4c;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 34px;
+    text-align: center;
+  }
+
+  .entry-top-intro h1 {
+    padding-top: clamp(54px, 7dvh, 62px);
+  }
+
+  .entry-top-finish {
+    top: 0;
+    height: clamp(392px, 46dvh, 394px);
+  }
+
+  .entry-top-finish h2 {
+    padding-top: clamp(132px, 16dvh, 136px);
+  }
+
+  .entry-question-panel {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+    width: max(430px, 112vw);
+    height: clamp(536px, 65dvh, 558px);
+    border-radius: 0 0 50% 50% / 0 0 16% 16%;
+    background: #ffcfa5;
+    transform: translateX(-50%);
+  }
+
+  .entry-question-panel::after {
+    position: absolute;
+    right: clamp(118px, 31vw, 142px);
+    bottom: -92px;
+    width: 86px;
+    height: 158px;
+    background: #ffcfa5;
+    clip-path: polygon(44% 0, 100% 0, 58% 52%, 78% 58%, 0 100%, 28% 58%, 9% 52%);
+    content: "";
+  }
+
+  .entry-question-content {
+    width: min(316px, calc(100vw - 78px));
+    margin: 0 auto;
+    padding-top: clamp(62px, 7.5dvh, 67px);
+  }
+
+  .entry-question-title,
+  .entry-question-subtitle,
+  .entry-question-prompt {
+    margin: 0;
+    color: #e44d4c;
+    font-family: "Source Sans 3", Inter, sans-serif;
+  }
+
+  .entry-question-title {
+    margin-bottom: 4px;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 36px;
+    text-align: center;
+    letter-spacing: 0.03em;
+  }
+
+  .entry-question-subtitle {
+    margin-top: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+  }
+
+  .entry-question-prompt {
+    margin-top: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 20px;
+    opacity: 0.75;
+  }
+
+  .entry-answer-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 18px;
+    margin-top: 36px;
+  }
+
+  .entry-answer {
+    display: flex;
+    min-height: 115px;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid transparent;
+    border-radius: 13px;
+    background: #e84a4c;
+    color: #ffcfa5;
+    cursor: pointer;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 18px;
+    padding: 10px 12px;
+    text-align: center;
+    transition:
+      border-color 160ms ease,
+      transform 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .entry-answer.is-selected {
+    border-color: #e44d4c;
+    background: #ffcfa5;
+    color: #e44d4c;
+    box-shadow:
+      0 0 0 4px rgba(228, 77, 76, 0.55),
+      0 9px 0 rgba(180, 44, 45, 0.22);
+    transform: translateY(-4px);
+  }
+
+  .entry-question.is-missing .entry-answer {
+    animation: entry-answer-pulse 240ms ease;
+  }
+
+  .entry-waves {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .entry-bolt {
+    position: absolute;
+    left: 0;
+    top: clamp(318px, 39dvh, 342px);
+    z-index: 5;
+    width: 121px;
+    height: 300px;
+    pointer-events: none;
+  }
+
+  .entry-intro .entry-bolt,
+  .entry-finish .entry-bolt {
+    top: clamp(292px, 36dvh, 316px);
+  }
+
+  .entry-question .entry-bolt {
+    top: clamp(512px, 60dvh, 538px);
+  }
+
+  .entry-mascot-layer,
+  .entry-question-mascot-layer {
+    position: absolute;
+    left: 50%;
+    z-index: 4;
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+
+  .entry-intro-mascot,
+  .entry-finish-mascot {
+    bottom: 95px;
+    width: min(319px, calc(100vw - 72px));
+  }
+
+  .entry-question-mascot-layer {
+    left: 39px;
+    bottom: 103px;
+    width: min(184px, calc(100vw - 154px));
+    transform: none;
+  }
+
+  .entry-question-mascot-layer.is-studious {
+    left: 25px;
+    bottom: 103px;
+    width: min(196px, calc(100vw - 144px));
+  }
+
+  .entry-mascot {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .entry-next {
+    position: absolute;
+    right: 38px;
+    bottom: 42px;
+    z-index: 7;
+    display: flex;
+    width: 52px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .entry-next img {
+    width: 46px;
+    height: 28px;
+  }
+
+  .entry-question .entry-next {
+    bottom: 96px;
+  }
+
+  .entry-progress {
+    position: absolute;
+    left: 50%;
+    bottom: 40px;
+    z-index: 6;
+    width: min(315px, calc(100vw - 78px));
+    height: 34px;
+    border: 1.5px solid #ffcfa5;
+    border-radius: 999px;
+    padding: 7px 8px;
+    transform: translateX(-50%);
+  }
+
+  .entry-progress span {
+    display: block;
+    width: var(--progress, 0%);
+    height: 100%;
+    border-radius: 999px;
+    background: #ffcfa5;
+    transition: width 260ms ease;
+  }
+
+  .entry-progress-top {
+    top: 66px;
+    bottom: auto;
+    border-color: #e44d4c;
+  }
+
+  .entry-progress-top span {
+    background: #eb6856;
+  }
+
+  @media (max-width: 360px) {
+    .entry-top-intro h1,
+    .entry-top-finish h2 {
+      width: min(302px, calc(100vw - 58px));
+      font-size: 24px;
+      line-height: 29px;
+    }
+
+    .entry-question-content {
+      width: min(302px, calc(100vw - 58px));
+    }
+
+    .entry-question-title {
+      font-size: 12px;
+    }
+
+    .entry-question-subtitle {
+      font-size: 24px;
+    }
+
+    .entry-answer {
+      min-height: 109px;
+      font-size: 16px;
+      line-height: 17px;
+    }
+
+    .entry-intro-mascot,
+    .entry-finish-mascot {
+      width: min(296px, calc(100vw - 62px));
+    }
+  }
+
+  @media (min-height: 900px) {
+    .entry-question-panel {
+      height: 600px;
+    }
+
+    .entry-question-mascot-layer {
+      bottom: 118px;
+    }
+
+    .entry-progress {
+      bottom: 50px;
+    }
+  }
+
+  @keyframes entry-answer-pulse {
+    50% {
+      transform: translateY(-2px);
+      box-shadow: 0 0 0 3px rgba(255, 207, 165, 0.18);
+    }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  const root = document.querySelector('[data-entry-questionnaire]');
+
+  if (root instanceof HTMLElement) {
+    const steps = Array.from(root.querySelectorAll('[data-step]'));
+    const status = root.querySelector('[data-entry-status]');
+    const questionCount = root.querySelectorAll('[data-question]').length;
+    const answers = {};
+    let currentStepIndex = 0;
+
+    const setStatus = (message) => {
+      if (status) {
+        status.textContent = message;
+      }
+    };
+
+    const parseJson = (value) => {
+      try {
+        return value ? JSON.parse(value) : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const getCurrentUserId = () => {
+      const storedId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+      const auth = parseJson(localStorage.getItem('pocketbase_auth'));
+      const pocketBaseId = auth && typeof auth === 'object' && auth.model ? auth.model.id : null;
+      return storedId || pocketBaseId || '';
+    };
+
+    const saveAnswers = () => {
+      try {
+        const userId = getCurrentUserId();
+        localStorage.setItem('octyEntryQuestionnaireAnswers', JSON.stringify(answers));
+
+        if (userId) {
+          localStorage.setItem(`octyEntryQuestionnaireAnswers:${userId}`, JSON.stringify(answers));
+        }
+      } catch {
+        // Local storage can be unavailable in private or restricted browser modes.
+      }
+    };
+
+    const showStep = (nextIndex) => {
+      currentStepIndex = Math.max(0, Math.min(nextIndex, steps.length - 1));
+      steps.forEach((step, index) => {
+        step.classList.toggle('is-active', index === currentStepIndex);
+      });
+
+      const activeStep = steps[currentStepIndex];
+      if (activeStep instanceof HTMLElement && activeStep.dataset.step === 'question') {
+        const questionIndex = steps.slice(0, currentStepIndex + 1).filter((step) => step instanceof HTMLElement && step.dataset.step === 'question').length;
+        setStatus(`Question ${questionIndex} sur ${questionCount}`);
+      } else if (activeStep instanceof HTMLElement && activeStep.dataset.step === 'finish') {
+        setStatus('Questionnaire termine.');
+      } else {
+        setStatus('');
+      }
+    };
+
+    const selectAnswer = (answerButton) => {
+      const questionStep = answerButton.closest('[data-question]');
+      const questionId = questionStep instanceof HTMLElement ? questionStep.dataset.question : undefined;
+      const answer = answerButton.dataset.answer;
+
+      if (!questionId || !answer) return false;
+
+      answers[questionId] = answer;
+      questionStep.classList.remove('is-missing');
+      questionStep.querySelectorAll('.entry-answer').forEach((button) => {
+        const isSelected = button === answerButton;
+        button.classList.toggle('is-selected', isSelected);
+        button.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+      });
+      setStatus('Reponse selectionnee.');
+      saveAnswers();
+      return true;
+    };
+
+    root.addEventListener('click', (event) => {
+      const target = event.target;
+
+      if (!(target instanceof Element)) return;
+
+      const answerButton = target.closest('.entry-answer');
+
+      if (answerButton instanceof HTMLButtonElement) {
+        selectAnswer(answerButton);
+        return;
+      }
+
+      const nextButton = target.closest('[data-next]');
+
+      if (nextButton instanceof HTMLButtonElement) {
+        const activeStep = steps[currentStepIndex];
+
+        if (activeStep instanceof HTMLElement && activeStep.dataset.step === 'finish') {
+          saveAnswers();
+
+          try {
+            const userId = getCurrentUserId();
+            localStorage.removeItem('octyEntryQuestionnairePending');
+            localStorage.setItem('octyEntryQuestionnaireDone', 'true');
+
+            if (userId) {
+              localStorage.setItem(`octyEntryQuestionnaireDone:${userId}`, 'true');
+              localStorage.removeItem(`octyHomeParcoursState:${userId}`);
+            }
+          } catch {
+            // Navigation should still work if storage is blocked.
+          }
+
+          window.location.href = '/accueil';
+          return;
+        }
+
+        if (activeStep instanceof HTMLElement && activeStep.dataset.step === 'question') {
+          const activeQuestion = activeStep.dataset.question;
+
+          if (activeQuestion && !answers[activeQuestion]) {
+            activeStep.classList.remove('is-missing');
+            window.requestAnimationFrame(() => {
+              activeStep.classList.add('is-missing');
+            });
+            setStatus('Selectionne une reponse avant de continuer.');
+            return;
+          }
+        }
+
+        showStep(currentStepIndex + 1);
+      }
+    });
+
+    root.addEventListener('keydown', (event) => {
+      const target = event.target;
+
+      if (!(target instanceof Element)) return;
+
+      const answerButton = target.closest('.entry-answer');
+      if (!(answerButton instanceof HTMLButtonElement)) return;
+
+      const keyDirection = {
+        ArrowRight: 1,
+        ArrowDown: 1,
+        ArrowLeft: -1,
+        ArrowUp: -1,
+      }[event.key];
+
+      if (!keyDirection) return;
+
+      const answerGroup = answerButton.closest('[role="radiogroup"]');
+      const answerButtons = answerGroup
+        ? Array.from(answerGroup.querySelectorAll('.entry-answer'))
+        : [];
+      const currentIndex = answerButtons.indexOf(answerButton);
+
+      if (currentIndex === -1 || answerButtons.length === 0) return;
+
+      event.preventDefault();
+      const nextIndex = (currentIndex + keyDirection + answerButtons.length) % answerButtons.length;
+      const nextButton = answerButtons[nextIndex];
+
+      if (nextButton instanceof HTMLButtonElement) {
+        nextButton.focus();
+        selectAnswer(nextButton);
+      }
+    });
+
+    showStep(0);
+  }
+</script>

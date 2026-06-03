@@ -1,0 +1,703 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout titre="Octy - Trouve des instances">
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"
+    />
+    <link
+      rel="preload"
+      as="script"
+      href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"
+    />
+  </Fragment>
+
+  <main class="bg-orange">
+    <section
+      class="relative left-1/2 w-screen max-w-none -translate-x-1/2 bg-red px-7 py-10 lg:px-10 lg:pt-16 lg:pb-3"
+    >
+      <div
+        class="mx-auto w-full max-w-92 lg:max-w-336 lg:mygrid lg:items-start"
+      >
+        <div
+          class="lg:col-start-1 lg:col-span-8 lg:flex lg:flex-col lg:items-start"
+        >
+          <h1
+            class="text-center font-heading text-[1.95rem] font-bold uppercase leading-[1.02] text-beige lg:text-left lg:text-[2.2rem]"
+          >
+            Trouve des<br />instances !
+          </h1>
+
+          <form
+            id="osm-search-form"
+            class="relative mt-4 w-full max-w-90 lg:mt-5"
+            role="search"
+          >
+            <label for="osm-search-input" class="sr-only"
+              >Rechercher une ville ou un lieu</label
+            >
+            <input
+              id="osm-search-input"
+              name="q"
+              type="search"
+              placeholder="recherche une ville, un lieu, ..."
+              class="h-11 w-full rounded-full border border-transparent bg-beige px-4 pr-11 font-sans text-sm text-red placeholder:text-saumon/85 focus:border-beige focus:outline-none"
+              autocomplete="off"
+              aria-describedby="osm-search-status"
+            />
+            <button
+              type="submit"
+              aria-label="Lancer la recherche"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-red"
+            >
+              <svg
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="7"
+                  stroke="currentColor"
+                  stroke-width="2"></circle>
+                <path
+                  d="M20 20L16.65 16.65"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"></path>
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="relative left-1/2 w-screen max-w-none -translate-x-1/2 bg-orange"
+    >
+      <div
+        id="osm-map"
+        class="w-full bg-orange"
+        style="height: clamp(26rem, 56vh, 42rem);"
+        aria-label="Carte OpenStreetMap"
+      >
+      </div>
+      <p
+        id="osm-search-status"
+        class="bg-red px-7 py-3 text-center font-sans text-xs text-beige/90 lg:px-10"
+        aria-live="polite"
+        aria-atomic="true"
+        role="status"
+      >
+        Astuce: cherche une ville, une adresse ou un lieu pour te positionner
+        sur la carte.
+      </p>
+
+      <div id="place-overlay"></div>
+
+      <div
+        id="place-card"
+        aria-hidden="true"
+        aria-modal="true"
+        role="dialog"
+        aria-labelledby="place-card-name"
+        aria-describedby="place-card-addr"
+        tabindex="-1"
+      >
+        <div class="place-handle"></div>
+        <div class="place-body">
+          <p id="place-card-name" class="place-name" tabindex="-1"></p>
+          <p id="place-card-addr" class="place-detail"></p>
+          <a id="place-card-tel" class="place-detail place-tel" href=""></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <style is:global>
+    #osm-map .maplibregl-ctrl-attrib {
+      background: rgba(228, 77, 76, 0.78);
+      color: #ffcfa5;
+      font-family: "Inter", sans-serif;
+      font-size: 11px;
+    }
+
+    #osm-map .maplibregl-ctrl-attrib a {
+      color: #ffcfa5;
+    }
+
+    #osm-map .maplibregl-popup-content {
+      background: #ffcfa5;
+      color: #8c1b19;
+      font-family: "Inter", sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 12px;
+      border-radius: 10px;
+    }
+
+    #osm-map .maplibregl-popup-tip {
+      border-top-color: #ffcfa5;
+      border-bottom-color: #ffcfa5;
+    }
+
+    #osm-map {
+      overflow: hidden;
+    }
+
+    .map-point {
+      display: block;
+      width: 24px;
+      height: 34px;
+      filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.22));
+      overflow: hidden;
+    }
+
+    .map-point svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .map-point-search {
+      width: 26px;
+      height: 36px;
+    }
+
+    #place-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      pointer-events: none;
+    }
+
+    #place-overlay.is-open {
+      display: block;
+      pointer-events: auto;
+    }
+
+    #place-card {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 201;
+      background: #ffcfa5;
+      border-radius: 22px 22px 0 0;
+      padding: 0 0 max(28px, env(safe-area-inset-bottom, 28px));
+      transform: translateY(100%);
+      transition:
+        transform 340ms cubic-bezier(0.32, 0.72, 0, 1),
+        visibility 0s linear 340ms;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    #place-card.is-open {
+      transform: translateY(0);
+      transition:
+        transform 340ms cubic-bezier(0.32, 0.72, 0, 1),
+        visibility 0s linear 0s;
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    .place-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 99px;
+      background: rgba(228, 77, 76, 0.3);
+      margin: 12px auto 14px;
+    }
+
+    .place-body {
+      padding: 0 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .place-name {
+      margin: 0;
+      color: #e44d4c;
+      font-family: "Source Sans 3", sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 22px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .place-detail {
+      margin: 0;
+      color: #e44d4c;
+      font-family: "Source Sans 3", sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 18px;
+      text-decoration: none;
+    }
+
+    .place-tel:empty {
+      display: none;
+    }
+  </style>
+
+  <script is:inline>
+    // @ts-nocheck
+    (function () {
+      const mapContainer = document.getElementById("osm-map");
+      const form = document.getElementById("osm-search-form");
+      const input = document.getElementById("osm-search-input");
+      const status = document.getElementById("osm-search-status");
+
+      if (!mapContainer || !form || !input || !status) return;
+
+      function setStatus(message) {
+        status.textContent = message;
+      }
+
+      function loadMaplibreScript() {
+        return new Promise((resolve, reject) => {
+          if (window.maplibregl) {
+            resolve(window.maplibregl);
+            return;
+          }
+
+          const script = document.createElement("script");
+          script.src =
+            "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js";
+          script.async = true;
+          script.onload = () => resolve(window.maplibregl);
+          script.onerror = () =>
+            reject(new Error("Impossible de charger MapLibre."));
+          document.head.appendChild(script);
+        });
+      }
+
+      function applySalmonStyle(map) {
+        const style = map.getStyle();
+        if (!style || !Array.isArray(style.layers)) return;
+
+        style.layers.forEach((layer) => {
+          try {
+            if (layer.type === "background") {
+              map.setPaintProperty(layer.id, "background-color", "#EA7D5E");
+            }
+
+            if (layer.type === "fill") {
+              const id = layer.id.toLowerCase();
+              if (id.includes("water")) {
+                map.setPaintProperty(layer.id, "fill-color", "#E8685A");
+              } else if (
+                id.includes("park") ||
+                id.includes("landuse") ||
+                id.includes("land")
+              ) {
+                map.setPaintProperty(layer.id, "fill-color", "#EA7D5E");
+              } else {
+                map.setPaintProperty(layer.id, "fill-color", "#E97A5F");
+              }
+            }
+
+            if (layer.type === "line") {
+              const id = layer.id.toLowerCase();
+              if (
+                id.includes("road") ||
+                id.includes("street") ||
+                id.includes("highway") ||
+                id.includes("transport")
+              ) {
+                map.setPaintProperty(layer.id, "line-color", "#FFCFA5");
+                map.setPaintProperty(layer.id, "line-opacity", 0.95);
+              }
+            }
+
+            if (layer.type === "symbol") {
+              map.setPaintProperty(layer.id, "text-color", "#FFE0C4");
+              map.setPaintProperty(layer.id, "text-halo-color", "#C94F4A");
+              map.setPaintProperty(layer.id, "text-halo-width", 1.1);
+            }
+          } catch (_error) {
+            // Ignore unsupported paint properties per layer.
+          }
+        });
+      }
+
+      loadMaplibreScript()
+        .then((maplibregl) => {
+          const map = new maplibregl.Map({
+            container: mapContainer,
+            style: "https://tiles.openfreemap.org/styles/liberty",
+            center: [2.35, 46.6],
+            zoom: 5.2,
+            attributionControl: true,
+          });
+
+          map.addControl(new maplibregl.NavigationControl(), "top-right");
+
+          let isLoadingInstitutions = false;
+          let lastLoadLat = null;
+          let lastLoadLon = null;
+
+          map.on("load", () => {
+            applySalmonStyle(map);
+
+            if (navigator.geolocation) {
+              setStatus("Localisation en cours…");
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  const lat = pos.coords.latitude;
+                  const lon = pos.coords.longitude;
+                  map.flyTo({ center: [lon, lat], zoom: 13, essential: true });
+                },
+                () => {
+                  setStatus(
+                    "Entre ton code postal pour voir les structures d'aide près de chez toi.",
+                  );
+                },
+                { timeout: 8000 },
+              );
+            } else {
+              setStatus(
+                "Entre ton code postal pour voir les structures d'aide près de chez toi.",
+              );
+            }
+          });
+
+          map.on("moveend", async () => {
+            if (map.getZoom() < 11 || isLoadingInstitutions) return;
+            const center = map.getCenter();
+            const lat = center.lat;
+            const lon = center.lng;
+            if (lastLoadLat !== null) {
+              const dlat = Math.abs(lat - lastLoadLat);
+              const dlon = Math.abs(lon - lastLoadLon);
+              if (dlat < 0.03 && dlon < 0.03) return;
+            }
+            lastLoadLat = lat;
+            lastLoadLon = lon;
+            isLoadingInstitutions = true;
+            setStatus("Recherche des structures d'aide à proximité…");
+            try {
+              const count = await loadInstitutions(lat, lon);
+              setStatus(
+                count > 0
+                  ? `${count} structure${count > 1 ? "s" : ""} d'aide trouvée${count > 1 ? "s" : ""} autour de toi.`
+                  : "Aucune structure répertoriée dans ce secteur sur OpenStreetMap.",
+              );
+            } catch (_) {
+              setStatus(
+                "Impossible de charger les structures. Réessaie dans quelques secondes.",
+              );
+            } finally {
+              isLoadingInstitutions = false;
+            }
+          });
+
+          function createPointElement(isSearchPoint, accessibleLabel = "", isInteractive = false) {
+            const pointElement = document.createElement("span");
+            const fillColor = isSearchPoint ? "#E44D4C" : "#8C1B19";
+            pointElement.className = isSearchPoint
+              ? "map-point map-point-search"
+              : "map-point";
+            if (accessibleLabel) {
+              pointElement.setAttribute("aria-label", accessibleLabel);
+              pointElement.setAttribute("role", isInteractive ? "button" : "img");
+            }
+            if (isInteractive) {
+              pointElement.tabIndex = 0;
+            }
+            pointElement.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M12 0C5.92 0 1 4.92 1 11c0 8.25 9.58 19.89 10.77 21.31a.3.3 0 00.46 0C13.42 30.89 23 19.25 23 11 23 4.92 18.08 0 12 0z" fill="${fillColor}"/><circle cx="12" cy="11" r="4.2" fill="none" stroke="#FFCFA5" stroke-width="1.8"/></svg>`;
+            return pointElement;
+          }
+
+          function createPopup(message) {
+            return new maplibregl.Popup({
+              closeButton: false,
+              offset: 24,
+            }).setText(message);
+          }
+
+          const placeCard = document.getElementById("place-card");
+          const placeOverlay = document.getElementById("place-overlay");
+          const placeName = document.getElementById("place-card-name");
+          const placeAddr = document.getElementById("place-card-addr");
+          const placeTel = document.getElementById("place-card-tel");
+          const cardFocusableSelector =
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+          let previousFocusedElement = null;
+
+          async function openCard(tags, lat, lon, triggerElement = null) {
+            previousFocusedElement =
+              triggerElement instanceof HTMLElement
+                ? triggerElement
+                : document.activeElement;
+            const name = tags.name || tags.operator || "Structure d'aide";
+            const osmParts = [
+              tags["addr:housenumber"],
+              tags["addr:street"],
+              tags["addr:postcode"],
+              tags["addr:city"],
+            ].filter(Boolean);
+            let addr = osmParts.length
+              ? osmParts.join(", ")
+              : tags["addr:full"] || "";
+            const tel =
+              tags.phone ||
+              tags["contact:phone"] ||
+              tags["contact:mobile"] ||
+              "";
+
+            placeName.textContent = name;
+            placeAddr.textContent = addr
+              ? addr
+              : lat
+                ? "Chargement adresse…"
+                : "";
+            if (tel) {
+              placeTel.textContent = "tél : " + tel;
+              placeTel.href = "tel:" + tel.replace(/\s/g, "");
+            } else {
+              placeTel.textContent = "";
+              placeTel.removeAttribute("href");
+            }
+
+            placeCard.classList.add("is-open");
+            placeCard.setAttribute("aria-hidden", "false");
+            placeOverlay.classList.add("is-open");
+            document.body.style.overflow = "hidden";
+            placeName.focus({ preventScroll: true });
+
+            if (!addr && lat && lon) {
+              try {
+                const revRes = await fetch(
+                  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`,
+                  { headers: { "Accept-Language": "fr" } },
+                );
+                const revData = await revRes.json();
+                if (revData && revData.address) {
+                  const a = revData.address;
+                  const road = a.road || a.pedestrian || a.path || "";
+                  const num = a.house_number || "";
+                  const postcode = a.postcode || "";
+                  const city =
+                    a.city || a.town || a.village || a.municipality || "";
+                  const revParts = [
+                    num && road ? `${num} ${road}` : road,
+                    postcode && city ? `${postcode} ${city}` : postcode || city,
+                  ].filter(Boolean);
+                  addr = revParts.join(", ");
+                }
+              } catch (_) {
+                /* ignore */
+              }
+              placeAddr.textContent = addr || "";
+            }
+          }
+
+          function closeCard() {
+            placeCard.classList.remove("is-open");
+            placeCard.setAttribute("aria-hidden", "true");
+            placeOverlay.classList.remove("is-open");
+            document.body.style.overflow = "";
+            if (previousFocusedElement instanceof HTMLElement) {
+              previousFocusedElement.focus();
+            }
+          }
+
+          placeOverlay.addEventListener("click", closeCard);
+          placeCard.addEventListener("click", (e) => e.stopPropagation());
+          document.addEventListener("keydown", (event) => {
+            if (!placeCard.classList.contains("is-open")) return;
+
+            if (
+              event.key === "Escape"
+            ) {
+              closeCard();
+            }
+
+            if (event.key === "Tab") {
+              const focusableElements = Array.from(
+                placeCard.querySelectorAll(cardFocusableSelector),
+              ).filter((element) => element instanceof HTMLElement && !element.hidden);
+              const firstElement = focusableElements[0];
+              const lastElement = focusableElements[focusableElements.length - 1];
+
+              if (!firstElement || !lastElement) {
+                event.preventDefault();
+                placeCard.focus({ preventScroll: true });
+                return;
+              }
+
+              if (
+                event.shiftKey &&
+                (document.activeElement === firstElement ||
+                  document.activeElement === placeCard ||
+                  document.activeElement === placeName)
+              ) {
+                event.preventDefault();
+                lastElement.focus();
+              } else if (!event.shiftKey && document.activeElement === lastElement) {
+                event.preventDefault();
+                firstElement.focus();
+              }
+            }
+          });
+
+          const institutionMarkers = [];
+
+          function clearInstitutionMarkers() {
+            institutionMarkers.forEach((m) => m.remove());
+            institutionMarkers.length = 0;
+          }
+
+          const RELEVANT_RE =
+            /\bCAF\b|CPAM|France Travail|France Services|Mission Locale|CCAS|CROUS|ADIL|CIDFF|MDPH|Allocations Familiales|Assurance Maladie|Maison France Services|Point Conseil Budget|Caisse.*Allocations|Caisse.*Maladie/i;
+          const IRRELEVANT_RE =
+            /caf[eéèê]|restau|brasserie|\bbar\b|bistro|snack|pizza|kebab|sushi|burger|traiteur|boulangerie|p[aâ]tisserie|[eéè]picerie|supermarch|hypermarch|grande surface|enseigne|commerce|boutique|salon|coiffure|ehpad|retraite|cr[eè]che|foyer|r[eé]sidence|PMI|maternelle|g[eé]riatrie|senior|petite enfance|fast.?food|friterie|sandwicherie|glacier|alimentation/i;
+
+          async function loadInstitutions(lat, lon) {
+            const dlat = 0.09;
+            const dlon = 0.13;
+            const bbox = `${lat - dlat},${lon - dlon},${lat + dlat},${lon + dlon}`;
+            const names =
+              "France Travail|France Services|Mission Locale|CCAS|CROUS|ADIL|CIDFF|MDPH|Caisse.*Allocations|Caisse.*Maladie|Maison France Services|Point Conseil Budget";
+            // Requêtes par type officiel (fiables, pas de faux positifs)
+            // + requêtes par nom avec exclusion explicite des commerces/restauration
+            const q = `[out:json][timeout:15];(node["office"="social_welfare"](${bbox});node["office"="employment_agency"](${bbox});node["amenity"="social_facility"](${bbox});node["name"~"${names}",i]["amenity"!~"restaurant|fast_food|cafe|bar|pub|biergarten|bakery|pharmacy|hospital|school|kindergarten|parking"][!"shop"](${bbox});way["office"="social_welfare"](${bbox});way["office"="employment_agency"](${bbox});way["amenity"="social_facility"](${bbox});way["name"~"${names}",i]["amenity"!~"restaurant|fast_food|cafe|bar|pub|biergarten|bakery|pharmacy|hospital|school|kindergarten|parking"][!"shop"](${bbox}););out center tags 30;`;
+
+            const tryFetch = (endpoint) =>
+              fetch(`${endpoint}?data=${encodeURIComponent(q)}`).then((r) => {
+                if (!r.ok) throw new Error();
+                return r;
+              });
+
+            const res = await Promise.any([
+              tryFetch("https://overpass-api.de/api/interpreter"),
+              tryFetch("https://overpass.kumi.systems/api/interpreter"),
+            ]);
+
+            if (!res.ok) throw new Error("Overpass error");
+            const data = await res.json();
+            const elements = data.elements || [];
+
+            clearInstitutionMarkers();
+
+            let count = 0;
+            for (const el of elements) {
+              const eLat = el.lat ?? el.center?.lat;
+              const eLon = el.lon ?? el.center?.lon;
+              if (!eLat || !eLon) continue;
+              const name =
+                el.tags?.name || el.tags?.operator || el.tags?.["name:fr"];
+              if (!name) continue;
+              if (IRRELEVANT_RE.test(name)) continue;
+              if (
+                !RELEVANT_RE.test(name) &&
+                el.tags?.office !== "social_welfare"
+              )
+                continue;
+
+              const markerEl = createPointElement(false, `Voir ${name}`, true);
+              markerEl.style.cursor = "pointer";
+              const openInstitutionCard = () =>
+                openCard(el.tags || {}, eLat, eLon, markerEl);
+              markerEl.addEventListener("click", openInstitutionCard);
+              markerEl.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  openInstitutionCard();
+                }
+              });
+              const marker = new maplibregl.Marker({
+                element: markerEl,
+                anchor: "bottom",
+              })
+                .setLngLat([eLon, eLat])
+                .addTo(map);
+
+              institutionMarkers.push(marker);
+              count++;
+            }
+
+            return count;
+          }
+
+          let resultMarker = null;
+
+          form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const query = input.value.trim();
+            if (!query) {
+              setStatus(
+                "Entre un code postal ou une ville pour lancer la recherche.",
+              );
+              return;
+            }
+
+            setStatus("Localisation en cours…");
+
+            try {
+              const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=fr&q=${encodeURIComponent(query)}`;
+              const response = await fetch(url, {
+                headers: { Accept: "application/json" },
+              });
+
+              if (!response.ok) throw new Error();
+
+              const results = await response.json();
+
+              if (!Array.isArray(results) || results.length === 0) {
+                setStatus(
+                  "Lieu introuvable. Essaie avec un code postal ou un nom de ville.",
+                );
+                return;
+              }
+
+              const { lat: latStr, lon: lonStr, display_name } = results[0];
+              const lat = Number(latStr);
+              const lon = Number(lonStr);
+
+              lastLoadLat = null;
+              lastLoadLon = null;
+
+              if (resultMarker) resultMarker.remove();
+              resultMarker = new maplibregl.Marker({
+                element: createPointElement(
+                  true,
+                  `Resultat de recherche : ${display_name}`,
+                ),
+                anchor: "bottom",
+              })
+                .setLngLat([lon, lat])
+                .setPopup(createPopup(display_name))
+                .addTo(map);
+              resultMarker.togglePopup();
+
+              setStatus("Recherche des structures d'aide à proximité…");
+              map.flyTo({ center: [lon, lat], zoom: 13, essential: true });
+            } catch (_error) {
+              setStatus(
+                "La recherche a échoué. Réessaie dans quelques secondes.",
+              );
+            }
+          });
+        })
+        .catch(() => {
+          setStatus("La carte n'a pas pu etre chargee pour le moment.");
+        });
+    })();
+  </script>
+</Layout>

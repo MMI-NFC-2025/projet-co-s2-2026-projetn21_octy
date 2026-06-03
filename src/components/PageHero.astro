@@ -1,0 +1,64 @@
+---
+interface Props {
+  title: string;
+  id?: string;
+}
+const { title, id } = Astro.props;
+---
+
+<section class="page-hero">
+  <img src="/svg/hero.svg" alt="" aria-hidden="true" class="page-hero-bg" />
+  <div class="page-hero-content">
+    <h1 id={id} class="page-hero-title" set:html={title} />
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    height: 174px;
+    overflow: visible;
+  }
+
+  .page-hero-bg {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    z-index: 0;
+    width: 108vw;
+    min-width: 468px;
+    height: 174px;
+    object-fit: fill;
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+
+  .page-hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 38px 20px;
+  }
+
+  .page-hero-title {
+    margin: 0;
+    color: #ffcfa5;
+    font-family: 'Source Sans 3', Inter, sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 33px;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 360px) {
+    .page-hero-title {
+      font-size: 29px;
+      line-height: 30px;
+    }
+  }
+</style>

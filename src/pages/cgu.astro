@@ -1,0 +1,139 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+
+const canonicalUrl = new URL('/cgu', Astro.url).href;
+---
+
+<Layout titre="CGU - Octy" requireAuth={false}>
+  <Fragment slot="head">
+    <meta name="description" content="Consultez les conditions g&eacute;n&eacute;rales d&rsquo;utilisation d&rsquo;Octy, web-app p&eacute;dagogique d&eacute;di&eacute;e &agrave; la compr&eacute;hension des d&eacute;marches administratives." />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content="CGU - Octy" />
+    <meta property="og:description" content="Consultez les conditions g&eacute;n&eacute;rales d&rsquo;utilisation d&rsquo;Octy, web-app p&eacute;dagogique d&eacute;di&eacute;e &agrave; la compr&eacute;hension des d&eacute;marches administratives." />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="CGU - Octy" />
+    <meta name="twitter:description" content="Consultez les conditions g&eacute;n&eacute;rales d&rsquo;utilisation d&rsquo;Octy, web-app p&eacute;dagogique d&eacute;di&eacute;e &agrave; la compr&eacute;hension des d&eacute;marches administratives." />
+  </Fragment>
+  <main class="cgu-page" aria-labelledby="cgu-title">
+    <PageHero title="Nos conditions<br />g&eacute;n&eacute;rales<br />d&rsquo;utilisation" id="cgu-title" />
+
+    <section class="cgu-content" aria-label="Conditions generales d'utilisation">
+      <a href="/a-propos" class="cgu-back" aria-label="Retour a la page a propos">
+        <span aria-hidden="true"></span>
+      </a>
+
+      <div class="cgu-text">
+        <p>
+          Le projet Octy est &eacute;dit&eacute; par L&eacute;onie Pruniaux, Elisa Saltini et Antonin Seichepine, constitu&eacute;s en SAS. Les illustrations vectorielles sont la propri&eacute;t&eacute; d&rsquo;Elisa Saltini et le code source appartient aux trois fondateurs. La marque Octy fait l&rsquo;objet d&rsquo;un d&eacute;p&ocirc;t &agrave; l&rsquo;INPI en classe 42 (services logiciels).
+        </p>
+
+        <p>
+          Octy est une application web p&eacute;dagogique destin&eacute;e &agrave; aider les jeunes adultes &agrave; mieux comprendre les d&eacute;marches administratives. Les contenus propos&eacute;s (parcours, explications, quiz et ressources) ont une vocation informative et p&eacute;dagogique.
+        </p>
+
+        <p>
+          Octy ne remplace pas les institutions officielles et ne constitue pas un conseil administratif ou juridique. Les utilisateurs sont invit&eacute;s &agrave; v&eacute;rifier toute information directement aupr&egrave;s des organismes concern&eacute;s (CAF, service-public.fr, impots.gouv.fr, etc.).
+        </p>
+
+        <p>
+          La cr&eacute;ation d&rsquo;un compte n&eacute;cessite uniquement une adresse email et un mot de passe afin de sauvegarder la progression de l&rsquo;utilisateur. Les paiements &eacute;ventuels sont trait&eacute;s par Stripe et aucune donn&eacute;e bancaire n&rsquo;est stock&eacute;e par Octy.
+        </p>
+
+        <p>
+          L&rsquo;h&eacute;bergement de la plateforme est assur&eacute; par Netlify pour le front-end et par Infomaniak pour l&rsquo;infrastructure serveur et la base de donn&eacute;es.
+        </p>
+
+        <p>
+          L&rsquo;ensemble des contenus, du design et du code de la plateforme est prot&eacute;g&eacute; par le droit de la propri&eacute;t&eacute; intellectuelle. Toute reproduction ou utilisation non autoris&eacute;e est interdite.
+        </p>
+
+        <p>
+          L&rsquo;utilisation du service implique l&rsquo;acceptation des pr&eacute;sentes conditions g&eacute;n&eacute;rales d&rsquo;utilisation.
+        </p>
+
+        <p>
+          L&rsquo;&eacute;quipe d&rsquo;Octy vous remercie pour votre confiance et votre soutien&nbsp;!
+        </p>
+      </div>
+
+      <a href="/a-propos" class="cgu-about-link">Retours &agrave; la page &agrave; propos</a>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .cgu-page {
+    min-height: calc(100dvh - 128px);
+    background: #ee6858;
+    color: #ffcfa5;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  .cgu-content {
+    background: #ee6858;
+    padding: 24px 39px 34px;
+  }
+
+  .cgu-back {
+    display: inline-flex;
+    width: 46px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+
+  .cgu-back span {
+    display: block;
+    width: 46px;
+    height: 28px;
+    background: #ffcfa5;
+    mask: url('/svg/fleche_cours.svg') center / contain no-repeat;
+    transform: rotate(180deg);
+    -webkit-mask: url('/svg/fleche_cours.svg') center / contain no-repeat;
+  }
+
+  .cgu-text {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: #ffcfa5;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  .cgu-text p {
+    margin: 0;
+  }
+
+  .cgu-about-link {
+    display: flex;
+    width: min(315px, 100%);
+    min-height: 51px;
+    align-items: center;
+    justify-content: center;
+    margin: 28px auto 0;
+    border-radius: 18px;
+    background: #ffcfa5;
+    color: #e44d4c;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 20px;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  @media (max-width: 360px) {
+    .cgu-content {
+      padding-inline: 30px;
+    }
+
+    .cgu-text {
+      font-size: 15px;
+      line-height: 19px;
+    }
+  }
+</style>

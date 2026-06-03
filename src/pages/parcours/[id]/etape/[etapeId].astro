@@ -1,0 +1,463 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import CourseLoadingScreen from '../../../../components/CourseLoadingScreen.astro';
+import { getParcours, getEtapesByParcours, getContenusByEtape, getQuizByEtape } from '../../../../js/backend.mjs';
+
+const { id, etapeId } = Astro.params;
+
+const [[tousLesParcours, etapes], contenus, quiz] = await Promise.all([
+  Promise.all([getParcours(), getEtapesByParcours(id)]),
+  getContenusByEtape(etapeId),
+  getQuizByEtape(etapeId),
+]);
+
+const parcours = tousLesParcours.find((p) => p.id === id);
+const etape = etapes.find((e) => e.id === etapeId);
+
+if (!parcours || !etape || contenus.length === 0) return Astro.redirect('/parcours');
+
+const total = contenus.length;
+const quizId = quiz[0]?.id ?? null;
+const etapeIndex = etapes.findIndex((e) => e.id === etapeId);
+const parcoursOrdre = parcours?.ordre ?? '';
+const coursOrdre = `${parcoursOrdre}.${etapeIndex + 1}`;
+const mascottes = ['/svg/octy-content.svg', '/svg/octy-shocked.svg', '/svg/octy-intello.svg'];
+
+const keywordTerms = [
+  'le loyer devient souvent ta dépense la plus importante',
+  'tiers de ton revenu mensuel',
+  'des aides existent',
+  'solidarité nationale',
+  'impôts',
+  'réduire le poids du loyer dans ton budget',
+  'Loyer = 600€',
+  'APL = 180€',
+  '420€',
+  'CAF',
+  'APL',
+  'revenus',
+  'résidence principale',
+  'contrat de location',
+  'parents ou grands-parents',
+  'bail',
+  'attestation de loyer',
+  'RIB',
+  'caf.fr',
+  'ADIL',
+  'France Services',
+  'quotient familial',
+  'prestations sociales',
+  'prime d\'activité',
+  'FSL',
+  'RSA jeune actif',
+  'BAFA',
+  'simulateur',
+  'FranceConnect',
+  'Sécurité sociale',
+  'documents demandés',
+  'terme échu',
+  'droit à l\'erreur',
+  'réclamation',
+  'médiateur',
+  'CERFA',
+  'Foyer',
+  'Ayant droit',
+  'situation familiale',
+  'justificatifs',
+  'déclaration sur l\'honneur',
+  'Assurance maladie',
+  'Dites-le-nous une fois',
+  'impots.gouv.fr',
+  'ameli.fr',
+  'ants.gouv.fr',
+  '3939',
+  'reste à vivre',
+  'taux d\'effort',
+  '29,6%',
+  '44,7%',
+  '609€/mois',
+  '857€/mois',
+  'IRL',
+  'charges',
+  'Gaz et électricité',
+  'assurance habitation',
+  'coût logement',
+  'plafond de loyer',
+  'reste à charge',
+  '33%',
+  'impayé',
+  'Visale',
+  'Action Logement',
+];
+
+const entityMap = {
+  'à': '&agrave;',
+  'À': '&Agrave;',
+  'â': '&acirc;',
+  'ç': '&ccedil;',
+  'Ç': '&Ccedil;',
+  'é': '&eacute;',
+  'É': '&Eacute;',
+  'è': '&egrave;',
+  'ê': '&ecirc;',
+  'î': '&icirc;',
+  'Î': '&Icirc;',
+  'ô': '&ocirc;',
+  'ù': '&ugrave;',
+  '€': '&euro;',
+};
+
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const encodeEntities = (value) => value.replace(/[àÀâçÇéÉèêîÎôù€]/g, (char) => entityMap[char] ?? char);
+
+function highlightKeywords(html) {
+  let result = html;
+  const placeholders = [];
+
+  [...keywordTerms]
+    .sort((a, b) => b.length - a.length)
+    .forEach((term) => {
+      [...new Set([term, encodeEntities(term)])].forEach((variant) => {
+        result = result.replace(new RegExp(escapeRegExp(variant), 'gi'), (match) => {
+          const token = `@@OCTY_KEYWORD_${placeholders.length}@@`;
+          placeholders.push(`<strong>${match}</strong>`);
+          return token;
+        });
+      });
+    });
+
+  placeholders.forEach((replacement, index) => {
+    result = result.replace(`@@OCTY_KEYWORD_${index}@@`, replacement);
+  });
+
+  return result;
+}
+---
+
+<Layout titre={etape.nom_etape + ' — Octy'}>
+  <div class="course-page">
+    <div id="meta" data-parcours-id={id} data-quiz-id={quizId ?? ''} class="hidden"></div>
+
+    <main class="course-shell">
+      <img src="/svg/vagues.svg" alt="" class="course-waves" aria-hidden="true" />
+
+      {contenus.map((contenu, index) => (
+        <section
+          data-index={index}
+          class={`contenu-ecran ${index === 0 ? 'is-active' : ''}`}
+        >
+          <div class="course-hero">
+            <img src="/svg/herocours.svg" alt="" aria-hidden="true" class="hero-shape" />
+
+            <div class="hero-copy">
+              <p class="parcours-label">Parcours {parcoursOrdre}</p>
+              <p class="course-label">Cours {coursOrdre} - {etape.nom_etape}</p>
+              <h1>{contenu.titre_contenu}</h1>
+            </div>
+          </div>
+
+          <div class="lesson-stage">
+            <article class="lesson-bubble">
+              <img src="/svg/bulle_cours_body.svg" alt="" aria-hidden="true" class="bubble-shape" />
+              <div class="lesson-text" set:html={highlightKeywords(contenu.description)} />
+            </article>
+            <img src="/svg/bulle_cours_tail.svg" alt="" aria-hidden="true" class="bubble-tail" />
+            <div class={`mascot-zone mascot-${index % mascottes.length}`}>
+              <img src={mascottes[index % mascottes.length]} alt="" aria-hidden="true" class="mascot" />
+              <button id={index === 0 ? 'btn-next' : undefined} class="lesson-next" type="button" aria-label="Ecran suivant">
+                <img src="/svg/fleche_cours.svg" alt="" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        </section>
+      ))}
+    </main>
+  </div>
+
+  <CourseLoadingScreen />
+</Layout>
+
+<style>
+  .course-page {
+    height: calc(100dvh - 210px);
+    min-height: 0;
+    overflow: hidden;
+    background: #eb6856;
+    color: #ffcfa5;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  .hidden,
+  .contenu-ecran:not(.is-active) {
+    display: none;
+  }
+
+  .course-shell {
+    position: relative;
+    height: 100%;
+  }
+
+  .course-waves {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .course-hero {
+    position: relative;
+    z-index: 10;
+    height: 276px;
+    overflow: visible;
+  }
+
+  .hero-shape {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 108vw;
+    min-width: 468px;
+    height: 276px;
+    transform: translateX(-50%);
+    object-fit: fill;
+  }
+
+  .hero-copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    height: 230px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 27px 38px 0;
+    text-align: center;
+  }
+
+  .parcours-label {
+    margin: 0 0 2px;
+    color: #ffcfa5;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 21px;
+  }
+
+  .course-label {
+    margin: 0 0 18px;
+    color: #ffcfa5;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 16px;
+  }
+
+  .hero-copy h1 {
+    max-width: 324px;
+    margin: 0;
+    color: #ffcfa5;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 32px;
+    text-transform: uppercase;
+  }
+
+  .lesson-stage {
+    position: relative;
+    --bubble-width: max(407px, calc(100vw + 14px));
+    height: calc(100% - 210px);
+    min-height: 430px;
+    margin-top: -66px;
+  }
+
+  .lesson-bubble {
+    position: relative;
+    z-index: 1;
+    width: var(--bubble-width);
+    aspect-ratio: 407 / 418;
+    margin: 0 0 0 50%;
+    transform: translateX(-50%);
+  }
+
+  .bubble-shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bubble-tail {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    z-index: 30;
+    width: var(--bubble-width);
+    aspect-ratio: 407 / 418;
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+
+  .lesson-text {
+    position: absolute;
+    top: 78px;
+    left: 50%;
+    z-index: 1;
+    width: min(360px, calc(100vw - 36px));
+    padding: 0;
+    transform: translateX(-50%);
+    color: #f04d4d;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+
+  .lesson-text p {
+    margin: 0;
+  }
+
+  .lesson-text strong,
+  .lesson-text b {
+    font-weight: 900;
+  }
+
+  .mascot-zone {
+    position: absolute;
+    left: 22px;
+    top: auto;
+    bottom: -32px;
+    z-index: 20;
+    width: 244px;
+    height: 232px;
+    margin: 0;
+  }
+
+  .mascot {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    width: auto;
+    max-width: none;
+    height: 232px;
+    transform: none;
+  }
+
+  .lesson-next {
+    position: absolute;
+    top: 132px;
+    z-index: 8;
+    display: flex;
+    width: 52px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .lesson-next {
+    right: -118px;
+  }
+
+  .lesson-next img {
+    width: 46px;
+    height: 28px;
+  }
+
+  @media (max-width: 360px) {
+    .hero-copy h1 {
+      font-size: 29px;
+      line-height: 30px;
+    }
+
+    .lesson-text {
+      width: min(340px, calc(100vw - 32px));
+      font-size: 18px;
+      line-height: 22px;
+    }
+
+    .mascot-zone {
+      bottom: -32px;
+      left: 14px;
+    }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  let indexActuel = 0;
+
+  const ecrans = document.querySelectorAll('.contenu-ecran');
+  const total = ecrans.length;
+  const parcoursId = document.querySelector('#meta').dataset.parcoursId;
+  const quizId = document.querySelector('#meta').dataset.quizId;
+
+  function afficher(index) {
+    ecrans.forEach((e) => {
+      e.classList.remove('is-active');
+      e.querySelector('.lesson-next').removeAttribute('id');
+    });
+
+    const current = ecrans[index];
+    current.classList.add('is-active');
+    current.querySelector('.lesson-next').id = 'btn-next';
+
+    bindNavigation();
+  }
+
+  function bindNavigation() {
+    const btnNext = document.querySelector('#btn-next');
+
+    btnNext.onclick = () => {
+      if (indexActuel < total - 1) {
+        indexActuel++;
+        afficher(indexActuel);
+      } else {
+        const destination = quizId ? `/quiz/${quizId}` : '/parcours';
+
+        window.dispatchEvent(
+          new CustomEvent('octy:loading:navigate', {
+            detail: { href: destination },
+          })
+        );
+
+        if (!window.octyShowCourseLoading) {
+          window.location.href = destination;
+        }
+      }
+    };
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowLeft') {
+    if (indexActuel > 0) {
+      indexActuel--;
+      afficher(indexActuel);
+    }
+    }
+
+    if (event.key === 'ArrowRight') {
+      document.querySelector('#btn-next')?.click();
+    }
+  });
+
+  afficher(0);
+
+  if (quizId) {
+    const preloadQuiz = () => {
+      if (window.octyPreloadPage) {
+        window.octyPreloadPage(`/quiz/${quizId}`);
+      }
+    };
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(preloadQuiz, { timeout: 800 });
+    } else {
+      window.setTimeout(preloadQuiz, 500);
+    }
+  }
+</script>

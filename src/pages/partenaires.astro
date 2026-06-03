@@ -1,0 +1,177 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+
+const canonicalUrl = new URL('/partenaires', Astro.url).href;
+---
+
+<Layout titre="Nos partenaires - Octy" requireAuth={false}>
+  <Fragment slot="head">
+    <meta name="description" content="D&eacute;couvrez les partenaires d&rsquo;Octy, la web-app p&eacute;dagogique qui accompagne les jeunes adultes dans la compr&eacute;hension des d&eacute;marches administratives." />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content="Nos partenaires - Octy" />
+    <meta property="og:description" content="D&eacute;couvrez les partenaires d&rsquo;Octy, la web-app p&eacute;dagogique qui accompagne les jeunes adultes dans la compr&eacute;hension des d&eacute;marches administratives." />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Nos partenaires - Octy" />
+    <meta name="twitter:description" content="D&eacute;couvrez les partenaires d&rsquo;Octy, la web-app p&eacute;dagogique qui accompagne les jeunes adultes dans la compr&eacute;hension des d&eacute;marches administratives." />
+  </Fragment>
+  <main class="partners-page" aria-labelledby="partners-title">
+    <PageHero title="Nos diff&eacute;rents<br />partenaires" id="partners-title" />
+
+    <section class="partners-content" aria-label="Partenaire Les Crous">
+      <a href="/a-propos" class="partners-back" aria-label="Retour a la page a propos">
+        <span aria-hidden="true"></span>
+      </a>
+
+      <div class="partners-logo-row">
+        <span class="partner-nav-arrow partner-nav-arrow-left" aria-hidden="true"></span>
+        <img src="/svg/partner-crous.svg" alt="Les Crous" class="partner-logo" />
+        <span class="partner-nav-arrow partner-nav-arrow-right" aria-hidden="true"></span>
+      </div>
+
+      <article class="partner-card">
+        <div class="partner-card-copy">
+          <h2>Les Crous</h2>
+          <p>
+            Organisme public qui accompagne les &eacute;tudiants (bourses, logement, vie &eacute;tudiante).<br />
+            Partenaire d&rsquo;Octy pour orienter les jeunes vers les aides et services adapt&eacute;s.
+          </p>
+        </div>
+      </article>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .partners-page {
+    display: flex;
+    min-height: calc(100dvh - 128px - 82px);
+    flex-direction: column;
+    background: #ee6858;
+    color: #ffcfa5;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  .partners-content {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background: #ee6858;
+    padding-top: 12px;
+  }
+
+  .partners-back {
+    display: inline-flex;
+    width: 46px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    margin-left: 38px;
+  }
+
+  .partners-back span {
+    display: block;
+    width: 46px;
+    height: 28px;
+    background: #ffcfa5;
+    mask: url('/svg/fleche_cours.svg') center / contain no-repeat;
+    transform: rotate(180deg);
+    -webkit-mask: url('/svg/fleche_cours.svg') center / contain no-repeat;
+  }
+
+  .partners-logo-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 28px 0 34px;
+  }
+
+  .partner-logo {
+    display: block;
+    width: min(219px, calc(100vw - 128px));
+    height: auto;
+  }
+
+  .partner-nav-arrow {
+    position: absolute;
+    top: 50%;
+    display: block;
+    width: 36px;
+    height: 22px;
+    background: #e44d4c;
+    mask: url('/svg/fleche_cours.svg') center / contain no-repeat;
+    opacity: 0.75;
+    -webkit-mask: url('/svg/fleche_cours.svg') center / contain no-repeat;
+  }
+
+  .partner-nav-arrow-left {
+    left: 38px;
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  .partner-nav-arrow-right {
+    right: 38px;
+    transform: translateY(-50%);
+  }
+
+  .partner-card {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    min-height: 209px;
+    background: #ffcfa5;
+    color: #e44d4c;
+    padding: 24px 39px 34px;
+  }
+
+  .partner-card-copy {
+    position: relative;
+    width: min(315px, 100%);
+  }
+
+  .partner-card h2 {
+    margin: 0 0 18px;
+    color: #e44d4c;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 27px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .partner-card p {
+    margin: 0;
+    color: #ee6858;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 18px;
+  }
+
+  @media (max-width: 360px) {
+    .partner-logo {
+      width: min(205px, calc(100vw - 122px));
+    }
+
+    .partners-back,
+    .partner-nav-arrow-left {
+      margin-left: 30px;
+      left: 30px;
+    }
+
+    .partner-nav-arrow-right {
+      right: 30px;
+    }
+
+    .partner-card {
+      padding-inline: 30px;
+    }
+
+    .partner-card p {
+      font-size: 15px;
+      line-height: 17px;
+    }
+  }
+</style>

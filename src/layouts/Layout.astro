@@ -1,0 +1,121 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import FooterAd from '../components/FooterAd.astro';
+
+interface Props {
+  titre: string;
+  requireAuth?: boolean;
+}
+
+const { titre, requireAuth = true } = Astro.props;
+const robotsContent = requireAuth ? 'noindex,nofollow' : null;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {robotsContent && <meta name="robots" content={robotsContent} />}
+    <title>{titre}</title>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    {requireAuth && (
+      <script is:inline>
+        // @ts-nocheck
+        (() => {
+          const loginPath = '/connexion';
+
+          const decodeBase64Url = (value) => {
+            const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+            const padding = (4 - (normalized.length % 4)) % 4;
+            return atob(normalized.padEnd(normalized.length + padding, '='));
+          };
+
+          const hasValidAuth = () => {
+            try {
+              const storedUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+              if (storedUserId) return true;
+
+              const rawAuth = localStorage.getItem('pocketbase_auth');
+              if (!rawAuth) return false;
+
+              const auth = JSON.parse(rawAuth);
+              if (!auth || typeof auth !== 'object') return false;
+              if (!auth.model || typeof auth.model.id !== 'string') return false;
+              if (typeof auth.token !== 'string' || !auth.token) return false;
+
+              const tokenPayload = auth.token.split('.')[1];
+              if (!tokenPayload) return false;
+
+              const payload = JSON.parse(decodeBase64Url(tokenPayload));
+              if (typeof payload.exp === 'number' && payload.exp * 1000 <= Date.now()) {
+                return false;
+              }
+
+              return true;
+            } catch {
+              return false;
+            }
+          };
+
+          if (!hasValidAuth()) {
+            const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+            const redirect = currentPath && currentPath !== '/' ? `?redirect=${encodeURIComponent(currentPath)}` : '';
+            window.location.replace(`${loginPath}${redirect}`);
+          }
+        })();
+      </script>
+    )}
+    <slot name="head" />
+  </head>
+  <body class="octy-layout-body">
+    <Header />
+    <div class="octy-layout-main">
+      <slot />
+    </div>
+    <FooterAd />
+  </body>
+</html>
+
+<style is:global>
+  html {
+    min-height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+    background: #eb6856;
+  }
+
+  body.octy-layout-body {
+    display: flex;
+    min-height: 100dvh;
+    flex-direction: column;
+    margin: 0;
+    overflow-x: hidden;
+    background: #eb6856;
+  }
+
+  .octy-layout-main {
+    display: flex;
+    flex: 1 0 auto;
+    min-width: 0;
+    flex-direction: column;
+    background: #eb6856;
+  }
+
+  .octy-layout-main > main,
+  .octy-layout-main > .about-page {
+    flex: 1 0 auto;
+  }
+
+  .octy-ad-footer {
+    flex: 0 0 auto;
+  }
+</style>

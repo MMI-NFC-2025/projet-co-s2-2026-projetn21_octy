@@ -1,0 +1,694 @@
+---
+// @ts-nocheck
+import Layout from '../layouts/Layout.astro';
+import CourseLoadingScreen from '../components/CourseLoadingScreen.astro';
+import { getEtapesByParcours, getParcours } from '../js/backend.mjs';
+
+const tousLesParcours = await getParcours();
+const displayByOrder = {
+  1: { key: 'logement', shortName: 'Aides au logement' },
+  2: { key: 'caf', shortName: 'La CAF' },
+  3: { key: 'admin', shortName: 'Formulaire' },
+  4: { key: 'budget', shortName: 'Budget' },
+};
+
+const vraisParcours = tousLesParcours
+  .filter((parcours) => parcours.statut !== 'payant' && displayByOrder[Number(parcours.ordre)])
+  .slice(0, 4);
+
+const parcoursCards = await Promise.all(
+  vraisParcours.map(async (parcours) => {
+    const order = Number(parcours.ordre);
+    const etapes = await getEtapesByParcours(parcours.id);
+    const firstEtape = etapes[0];
+
+    return {
+      id: parcours.id,
+      order,
+      key: displayByOrder[order].key,
+      shortName: displayByOrder[order].shortName,
+      fullName: parcours.nom_parcours,
+      href: firstEtape ? `/parcours/${parcours.id}/etape/${firstEtape.id}` : '/parcours',
+    };
+  })
+);
+
+const fallbackCurrent = parcoursCards.filter((parcours) => parcours.order === 1 || parcours.order === 3);
+const fallbackRecommended = parcoursCards.filter((parcours) => parcours.order !== 1 && parcours.order !== 3);
+const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
+---
+
+<Layout titre="Accueil - Octy">
+  <main class="home-page" data-home-page>
+    <section class="home-hero" aria-labelledby="home-title">
+      <img src="/svg/vagues.svg" alt="" class="home-waves" aria-hidden="true" />
+
+      <div class="home-mascot-frame" aria-hidden="true">
+        <img src="/svg/octy-neutral.svg" alt="" class="home-mascot" data-home-avatar />
+        <span class="home-level" data-user-level>0</span>
+      </div>
+
+      <p class="home-kicker">Bon retour parmis nous</p>
+      <h1 id="home-title">
+        <span data-user-name>Utilisateur</span>&nbsp;!
+      </h1>
+    </section>
+
+    <section class="home-current" aria-labelledby="current-title" data-current-section>
+      <img src="/svg/fond1.svg" alt="" class="home-shape" aria-hidden="true" />
+      <div class="home-section-inner">
+        <h2 id="current-title">Parcours en cours&nbsp;:</h2>
+        <div class="home-card-stack" data-current-list>
+          {
+            fallbackCurrent.map((parcours) => (
+              <article
+                class="home-card is-current"
+                data-parcours-card
+                data-parcours-id={parcours.id}
+                data-parcours-key={parcours.key}
+                data-parcours-order={parcours.order}
+              >
+                <h3>{`Parcours ${parcours.order} - ${parcours.shortName}`}</h3>
+                <p data-card-subtitle>Reprendre l&agrave; o&ugrave; vous en &eacute;tiez</p>
+                <a href={parcours.href} class="home-card-action" data-course-action data-course-loading-link>
+                  <span class="home-action-arrow" aria-hidden="true"></span>
+                  <span data-action-label>CONTINUER&nbsp;!</span>
+                </a>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="home-recommended" aria-labelledby="recommended-title" data-recommended-section>
+      <img src="/svg/vagues.svg" alt="" class="home-waves" aria-hidden="true" />
+
+      <div class="home-section-inner">
+        <h2 id="recommended-title">Parcours recommand&eacute;s&nbsp;:</h2>
+        <div class="home-card-stack" data-recommended-list>
+          {
+            fallbackRecommended.map((parcours) => (
+              <article
+                class="home-card is-recommended"
+                data-parcours-card
+                data-parcours-id={parcours.id}
+                data-parcours-key={parcours.key}
+                data-parcours-order={parcours.order}
+              >
+                <h3>{`Parcours ${parcours.order} - ${parcours.shortName}`}</h3>
+                <p data-card-subtitle>Commencer ce parcours</p>
+                <a href={parcours.href} class="home-card-action" data-course-action data-course-loading-link>
+                  <span class="home-action-arrow" aria-hidden="true"></span>
+                  <span data-action-label>C&rsquo;EST PARTI&nbsp;!</span>
+                </a>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="home-more" aria-labelledby="more-title">
+      <img src="/svg/fond2.svg" alt="" class="home-shape" aria-hidden="true" />
+      <div class="home-section-inner">
+        <h2 id="more-title">Vous en voulez plus&nbsp;?</h2>
+        <article class="home-card is-current home-explore-card">
+          <h3>
+            <span>Explorer</span>
+            <span>les diff&eacute;rents parcours</span>
+          </h3>
+          <a href="/parcours" class="home-card-action">
+            <span class="home-action-arrow" aria-hidden="true"></span>
+            <span>ALLONS-Y&nbsp;!</span>
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <script type="application/json" id="home-parcours-data" set:html={parcoursPayload}></script>
+  </main>
+
+  <CourseLoadingScreen />
+</Layout>
+
+<style>
+  .home-page {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    background: #eb6856;
+    color: #ffcfa5;
+    font-family: 'Source Sans 3', Inter, sans-serif;
+  }
+
+  .home-waves {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .home-hero {
+    position: relative;
+    display: flex;
+    min-height: 379px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: #eb6856;
+    padding: 52px 0 44px;
+    text-align: center;
+    overflow: visible;
+  }
+
+  .home-hero .home-waves {
+    z-index: 0;
+    height: auto;
+    min-height: 100%;
+    object-fit: contain;
+  }
+
+  .home-mascot-frame {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 180px;
+    height: 180px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ffcfa5;
+  }
+
+  .home-mascot {
+    display: block;
+    width: 125px;
+    height: auto;
+  }
+
+  .home-level {
+    position: absolute;
+    top: -4px;
+    right: -13px;
+    display: flex;
+    width: 52px;
+    height: 52px;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #ffcfa5;
+    border-radius: 50%;
+    background: #eb6856;
+    color: #ffcfa5;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .home-kicker,
+  .home-hero h1,
+  .home-section-inner h2,
+  .home-card h3,
+  .home-card p {
+    margin: 0;
+  }
+
+  .home-kicker {
+    position: relative;
+    z-index: 1;
+    margin-top: 20px;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 22px;
+    text-transform: uppercase;
+  }
+
+  .home-hero h1 {
+    position: relative;
+    z-index: 1;
+    margin-top: 2px;
+    color: #ffcfa5;
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 34px;
+    text-transform: uppercase;
+  }
+
+  .home-section-inner {
+    width: min(317px, calc(100vw - 76px));
+    margin: 0 auto;
+  }
+
+  .home-section-inner h2 {
+    color: #e44d4c;
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 24px;
+    text-transform: uppercase;
+  }
+
+  .home-current {
+    position: relative;
+    z-index: 3;
+    background: transparent;
+    margin-top: -35px;
+    padding: 59px 0 78px;
+    overflow: hidden;
+  }
+
+  .home-current .home-section-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-current .home-shape {
+    height: 100%;
+    object-fit: fill;
+  }
+
+  .home-shape {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .home-recommended {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    padding: 54px 0 50px;
+    overflow: visible;
+  }
+
+  .home-recommended .home-waves {
+    display: none;
+  }
+
+  .home-recommended.is-first-section {
+    background: #ffcfa5;
+    border-top-right-radius: 34px;
+    padding-top: 24px;
+  }
+
+  .home-recommended.is-first-section .home-waves {
+    display: none;
+  }
+
+  .home-recommended.is-first-section .home-section-inner h2 {
+    color: #e44d4c;
+  }
+
+  .home-recommended.is-first-section .home-card.is-recommended {
+    background: #e84a4c;
+    color: #ffcfa5;
+  }
+
+  .home-recommended.is-first-section .home-card.is-recommended .home-card-action {
+    background: #ffcfa5;
+    color: #eb6856;
+  }
+
+  .home-recommended .home-section-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-recommended .home-section-inner h2 {
+    color: #ffcfa5;
+  }
+
+  .home-more {
+    position: relative;
+    z-index: 4;
+    background: #ffcfa5;
+    margin-top: -20px;
+    padding: 46px 0 80px;
+    overflow: hidden;
+  }
+
+  .home-more .home-section-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-card-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 23px;
+    margin-top: 27px;
+  }
+
+  .home-card {
+    display: block;
+    border-radius: 17px;
+    font-family: 'Source Sans 3', Inter, sans-serif;
+  }
+
+  .home-card h3 {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 23px;
+  }
+
+  .home-card p {
+    margin-top: 2px;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 18px;
+  }
+
+  .home-card-action {
+    display: flex;
+    height: 59px;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 16px;
+    border-radius: 11px;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 22px;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .home-action-arrow {
+    display: block;
+    width: 34px;
+    height: 14px;
+    background: currentColor;
+    mask: url('/svg/arrow_button.svg') center / contain no-repeat;
+    -webkit-mask: url('/svg/arrow_button.svg') center / contain no-repeat;
+  }
+
+  .home-card.is-current {
+    background: #e84a4c;
+    color: #ffcfa5;
+    padding: 17px 19px 16px;
+  }
+
+  .home-card.is-current .home-card-action {
+    background: #ffcfa5;
+    color: #eb6856;
+  }
+
+  .home-card.is-recommended {
+    background: #ffcfa5;
+    color: #f15d57;
+    padding: 18px 19px 17px;
+  }
+
+  .home-card.is-recommended .home-card-action {
+    background: #e84a4c;
+    color: #ffcfa5;
+  }
+
+  .home-explore-card {
+    margin-top: 27px;
+  }
+
+  .home-explore-card h3 {
+    color: #ffcfa5;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .home-explore-card h3 span {
+    display: block;
+  }
+
+  @media (max-width: 360px) {
+    .home-section-inner {
+      width: min(302px, calc(100vw - 58px));
+    }
+
+    .home-card h3 {
+      font-size: 18px;
+      line-height: 21px;
+    }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  import { getUserProgress } from '../js/progression.mjs';
+
+  const root = document.querySelector('[data-home-page]');
+  const dataElement = document.getElementById('home-parcours-data');
+
+  const parseJson = (value) => {
+    try {
+      return value ? JSON.parse(value) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const getPocketBaseUser = () => {
+    const auth = parseJson(localStorage.getItem('pocketbase_auth'));
+    return auth && typeof auth === 'object' && auth.model ? auth.model : null;
+  };
+
+  const getCurrentUserId = () => {
+    const storedId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const pocketBaseUser = getPocketBaseUser();
+    return storedId || pocketBaseUser?.id || 'guest';
+  };
+
+  const getUserName = () => {
+    const pocketBaseUser = getPocketBaseUser();
+    const storedName = localStorage.getItem('octyUserName');
+    const userName = storedName || pocketBaseUser?.prenom_nom || pocketBaseUser?.name || pocketBaseUser?.username;
+
+    if (typeof userName === 'string' && userName.trim()) {
+      return userName.trim().split(/\s+/)[0];
+    }
+
+    if (typeof pocketBaseUser?.email === 'string') {
+      return pocketBaseUser.email.split('@')[0];
+    }
+
+    return 'Utilisateur';
+  };
+
+  const getUserLevel = (userId) => {
+    return getUserProgress(userId).level;
+  };
+
+  const getAnswersForUser = (userId) => {
+    const userAnswers = parseJson(localStorage.getItem(`octyEntryQuestionnaireAnswers:${userId}`));
+    const sharedAnswers = parseJson(localStorage.getItem('octyEntryQuestionnaireAnswers'));
+
+    if (userAnswers) return userAnswers;
+
+    if (sharedAnswers && userId !== 'guest') {
+      localStorage.setItem(`octyEntryQuestionnaireAnswers:${userId}`, JSON.stringify(sharedAnswers));
+    }
+
+    return sharedAnswers || {};
+  };
+
+  const getRecommendationOrder = (parcours, answers) => {
+    if (!answers || Object.keys(answers).length === 0) {
+      const fallbackRank = {
+        logement: 0,
+        admin: 1,
+        caf: 2,
+        budget: 3,
+      };
+
+      return [...parcours].sort((a, b) => fallbackRank[a.key] - fallbackRank[b.key]);
+    }
+
+    const weights = {
+      logement: 0,
+      caf: 0,
+      admin: 0,
+      budget: 0,
+    };
+
+    const add = (key, amount = 1) => {
+      if (key in weights) weights[key] += amount;
+    };
+
+    Object.values(answers).forEach((answer) => {
+      switch (answer) {
+        case 'chercher_logement':
+        case 'aide_logement':
+          add('logement', 4);
+          break;
+        case 'gerer_caf':
+        case 'suivre_caf':
+        case 'erreur_caf':
+          add('caf', 4);
+          break;
+        case 'dossier_administratif':
+        case 'remplir_dossier':
+        case 'comprendre_demande':
+          add('admin', 4);
+          break;
+        case 'budget':
+        case 'gerer_budget':
+        case 'ajuster_budget':
+        case 'argent':
+          add('budget', 4);
+          break;
+        case 'jamais':
+        case 'avec_aide':
+        case 'comprends_peu':
+        case 'perdu':
+          add('admin', 3);
+          add('logement', 1);
+          add('caf', 1);
+          break;
+        case 'une_fois':
+        case 'comprends_partiellement':
+          add('admin', 2);
+          break;
+        case 'aides':
+        case 'droits':
+        case 'verifier_aides':
+          add('caf', 2);
+          add('logement', 1);
+          break;
+        case 'commencer':
+          add('admin', 2);
+          add('logement', 1);
+          break;
+        default:
+          break;
+      }
+    });
+
+    return [...parcours].sort((a, b) => {
+      const scoreDiff = (weights[b.key] || 0) - (weights[a.key] || 0);
+      return scoreDiff || a.order - b.order;
+    });
+  };
+
+  const applyCardVariant = (card, variant) => {
+    card.classList.toggle('is-current', variant === 'current');
+    card.classList.toggle('is-recommended', variant === 'recommended');
+
+    const label = card.querySelector('[data-action-label]');
+    if (label) {
+      label.textContent = variant === 'current' ? 'CONTINUER !' : "C'EST PARTI !";
+    }
+
+    const subtitle = card.querySelector('[data-card-subtitle]');
+    if (subtitle) {
+      subtitle.textContent = variant === 'current' ? 'Reprendre là où vous en étiez' : 'Commencer ce parcours';
+    }
+  };
+
+  if (root instanceof HTMLElement && dataElement) {
+    const userId = getCurrentUserId();
+    const userNameTarget = root.querySelector('[data-user-name]');
+    const userLevelTarget = root.querySelector('[data-user-level]');
+    const homeAvatar = root.querySelector('[data-home-avatar]');
+    const currentList = root.querySelector('[data-current-list]');
+    const recommendedList = root.querySelector('[data-recommended-list]');
+    const allParcours = parseJson(dataElement.textContent) || [];
+    const cards = Array.from(root.querySelectorAll('[data-parcours-card]'));
+
+    if (userNameTarget) {
+      userNameTarget.textContent = getUserName();
+    }
+
+    if (userLevelTarget) {
+      userLevelTarget.textContent = String(getUserLevel(userId));
+    }
+
+    if (homeAvatar instanceof HTMLImageElement) {
+      homeAvatar.src = localStorage.getItem(`octySelectedAvatar:${userId}`) || '/svg/octy-neutral.svg';
+    }
+
+    const pendingQuestionnaire = localStorage.getItem('octyEntryQuestionnairePending') === 'true';
+    const questionnaireDone = localStorage.getItem(`octyEntryQuestionnaireDone:${userId}`) === 'true'
+      || localStorage.getItem('octyEntryQuestionnaireDone') === 'true';
+
+    if (pendingQuestionnaire && !questionnaireDone && userId !== 'guest') {
+      window.location.href = '/questionnaire';
+    }
+
+    const stateKey = `octyHomeParcoursState:${userId}`;
+    let state = parseJson(localStorage.getItem(stateKey));
+
+    if (!state && allParcours.length) {
+      const ordered = getRecommendationOrder(allParcours, getAnswersForUser(userId));
+      state = {
+        current: [],
+        recommended: ordered.map((parcours) => parcours.id),
+      };
+      localStorage.setItem(stateKey, JSON.stringify(state));
+    }
+
+    const currentSection = root.querySelector('[data-current-section]');
+    const recommendedSection = root.querySelector('[data-recommended-section]');
+
+    if (state && currentList && recommendedList) {
+      const byId = new Map(cards.map((card) => [card.dataset.parcoursId, card]));
+      const currentIds = Array.isArray(state.current) ? state.current : [];
+      const recommendedIds = Array.isArray(state.recommended) ? state.recommended : [];
+      const missingIds = allParcours
+        .map((parcours) => parcours.id)
+        .filter((id) => !currentIds.includes(id) && !recommendedIds.includes(id));
+
+      currentList.textContent = '';
+      recommendedList.textContent = '';
+
+      currentIds.forEach((id) => {
+        const card = byId.get(id);
+        if (!card) return;
+        applyCardVariant(card, 'current');
+        currentList.append(card);
+      });
+
+      [...recommendedIds, ...missingIds].forEach((id) => {
+        const card = byId.get(id);
+        if (!card) return;
+        applyCardVariant(card, 'recommended');
+        recommendedList.append(card);
+      });
+
+      if (currentSection instanceof HTMLElement) {
+        currentSection.hidden = currentIds.length === 0;
+      }
+      if (recommendedSection instanceof HTMLElement) {
+        recommendedSection.classList.toggle('is-first-section', currentIds.length === 0);
+      }
+    }
+
+    root.querySelectorAll('[data-course-action]').forEach((link) => {
+      link.addEventListener('click', () => {
+        const card = link.closest('[data-parcours-card]');
+        const parcoursId = card instanceof HTMLElement ? card.dataset.parcoursId : null;
+
+        if (!parcoursId) return;
+
+        const currentState = parseJson(localStorage.getItem(stateKey)) || { current: [], recommended: [] };
+        const current = Array.isArray(currentState.current) ? currentState.current : [];
+        const recommended = Array.isArray(currentState.recommended) ? currentState.recommended : [];
+
+        const wasEmpty = current.length === 0;
+        currentState.current = [parcoursId, ...current.filter((id) => id !== parcoursId)];
+        currentState.recommended = recommended.filter((id) => id !== parcoursId);
+        localStorage.setItem(stateKey, JSON.stringify(currentState));
+
+        if (wasEmpty && currentSection instanceof HTMLElement) {
+          currentSection.hidden = false;
+        }
+        if (wasEmpty && recommendedSection instanceof HTMLElement) {
+          recommendedSection.classList.remove('is-first-section');
+        }
+      });
+    });
+  }
+</script>

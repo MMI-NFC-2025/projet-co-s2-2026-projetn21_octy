@@ -1,0 +1,23 @@
+@import "tailwindcss";
+@config "../../tailwind.config.mjs";
+
+@theme {
+    /* Couleurs principales */
+    --color-beige: #FFCFA5;
+    --color-noir: #000000;
+    --color-saumon: #EA7D5E;
+    --color-orange: #EB6856;
+    --color-red: #E44D4C;
+    --color-gris: #787878;
+    --color-gris-clair: #D7C9BD;
+    --color-salmon: #EE947B;
+
+    /* Couleurs secondaires */
+    --color-vert: #1F6D14;
+    --color-vert-flou: #529149;
+    --color-rouge-fonce: #8C1B19;
+
+    /* Fonts */
+    --font-heading: 'Source Sans 3', sans-serif;
+    --font-sans: 'Inter', sans-serif;
+}

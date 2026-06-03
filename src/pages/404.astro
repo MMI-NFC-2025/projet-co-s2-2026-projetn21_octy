@@ -1,0 +1,179 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Erreur 404 - Octy</title>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Sans+3:wght@600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="error-body">
+    <Header />
+
+    <main class="error-main" aria-labelledby="error-title">
+      <section class="error-copy">
+        <h1 id="error-title">Erreur 404&hellip;</h1>
+        <p>
+          Cette page n&rsquo;existe pas (ou plus).<br />
+          Octy a beau avoir 8 tentacules, il ne la trouve plus.
+          Retourne &agrave; l&rsquo;accueil pour reprendre la navigation.
+        </p>
+      </section>
+
+      <svg class="error-bolt" viewBox="0 105 121 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M68.3728 299.812L50.4213 322.352L3.33786e-06 225.5L0 113L13.3674 105L54.1803 271.369L71.3647 251.512L121 405L68.3728 299.812Z" fill="#FFCFA5"/>
+      </svg>
+
+      <div class="error-bottom">
+        <img src="/svg/octy-sad.svg" alt="" class="error-mascot" aria-hidden="true" />
+
+        <a href="/accueil" class="error-home">Retour a l&rsquo;accueil</a>
+      </div>
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(html),
+  :global(body) {
+    margin: 0;
+    min-height: 100%;
+    background: #eb6856;
+  }
+
+  .error-body {
+    min-height: 100dvh;
+    margin: 0;
+    background: #eb6856;
+    color: #e44d4c;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  .error-main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100dvh - 128px);
+    overflow: hidden;
+    background: #eb6856;
+    isolation: isolate;
+  }
+
+  .error-main::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 1;
+    width: max(430px, 112vw);
+    height: clamp(244px, 31dvh, 292px);
+    border-radius: 0 0 50% 50% / 0 0 28% 28%;
+    background: #ffcfa5;
+    transform: translateX(-50%);
+  }
+
+  .error-copy {
+    position: relative;
+    z-index: 2;
+    width: min(326px, calc(100vw - 54px));
+    margin: 0 auto;
+    padding-top: 66px;
+    text-align: center;
+  }
+
+  .error-copy h1 {
+    margin: 0 0 18px;
+    color: #e44d4c;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 33px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .error-copy p {
+    margin: 0;
+    color: #e44d4c;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 18px;
+  }
+
+  .error-bolt {
+    position: absolute;
+    left: 0;
+    top: clamp(158px, 21dvh, 214px);
+    z-index: 3;
+    width: 121px;
+    height: 300px;
+    pointer-events: none;
+  }
+
+  .error-bottom {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 0;
+    padding-bottom: clamp(18px, 3dvh, 28px);
+  }
+
+  .error-mascot {
+    display: block;
+    width: min(342px, calc(100vw - 34px));
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .error-home {
+    display: flex;
+    width: min(315px, calc(100vw - 78px));
+    height: 51px;
+    align-items: center;
+    justify-content: center;
+    margin: clamp(42px, 6dvh, 58px) auto 0;
+    border-radius: 18px;
+    background: #ffcfa5;
+    color: #e44d4c;
+    font-family: "Source Sans 3", Inter, sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 20px;
+    text-decoration: none;
+  }
+
+  @media (max-width: 360px) {
+    .error-copy {
+      padding-top: 52px;
+    }
+
+    .error-copy h1 {
+      font-size: 29px;
+      line-height: 30px;
+    }
+
+    .error-copy p {
+      font-size: 15px;
+      line-height: 17px;
+    }
+
+    .error-mascot {
+      width: min(310px, calc(100vw - 28px));
+    }
+  }
+</style>

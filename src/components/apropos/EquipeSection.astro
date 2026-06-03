@@ -1,0 +1,66 @@
+---
+import tete1Url from '../../assets/svg/equipe/tete1.svg?url';
+import tete2Url from '../../assets/svg/equipe/tete2.svg?url';
+import tete3Url from '../../assets/svg/equipe/tete3.svg?url';
+
+const membres = [
+  {
+    prenom: 'Elisa',
+    nom: 'Saltini',
+    image: tete1Url,
+  },
+  {
+    prenom: 'Antonin',
+    nom: 'Seichepine',
+    image: tete2Url,
+  },
+  {
+    prenom: 'Leonie',
+    nom: 'Pruniaux',
+    image: tete3Url,
+  },
+];
+---
+
+<section class="overflow-hidden bg-orange px-7 pt-16 pb-24">
+  <div class="mx-auto flex w-full max-w-[22rem] flex-col gap-10 text-beige">
+    <div class="flex flex-col gap-4">
+      <h2 class="text-center font-heading text-[2.25rem] font-bold uppercase leading-[1.05]">
+        L'&eacute;quipe
+      </h2>
+
+      <p class="font-sans text-[1.05rem] font-bold leading-tight">
+        Projet r&eacute;alis&eacute; par :
+      </p>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      {membres.map((membre) => (
+        <article class="flex w-full max-w-[6.75rem] flex-col items-center gap-3 text-center">
+          <img
+            src={membre.image}
+            alt={`Portrait illustre de ${membre.prenom} ${membre.nom}`}
+            class="mx-auto h-[6.25rem] w-full max-w-[6.25rem] object-contain"
+            loading="lazy"
+          />
+
+          <p class="text-center font-sans text-[0.95rem] leading-[1.05]">
+            <span class="block">{membre.prenom}</span>
+            <span class="block">{membre.nom}</span>
+          </p>
+        </article>
+      ))}
+    </div>
+
+    <p class="max-w-[18rem] font-sans text-[1rem] leading-[1.2] text-beige/95">
+      <span class="block">BUT M&eacute;tiers du Multim&eacute;dia et de l'Internet</span>
+      <span class="block">Universit&eacute; de Franche-Comt&eacute;</span>
+    </p>
+
+    <div class="flex flex-col gap-3 font-sans text-[1rem] font-bold leading-tight text-beige">
+      <a href="/cgu" class="underline underline-offset-4">
+        Lire nos conditions g&eacute;n&eacute;rales d&rsquo;utilisation
+      </a>
+    </div>
+  </div>
+</section>

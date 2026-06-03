@@ -1,0 +1,820 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import {
+  getQuestionsByQuiz,
+  getReponsesByQuestion,
+  getQuizByEtape,
+  getParcours,
+  getEtapesByParcours,
+} from "../../js/backend.mjs";
+
+const { id } = Astro.params;
+
+let etapeId = null;
+let parcoursId = null;
+let parcours = null;
+let etape = null;
+
+const tousLesParcours = await getParcours();
+outer: for (const p of tousLesParcours) {
+  const etapes = await getEtapesByParcours(p.id);
+  for (const e of etapes) {
+    const quizList = await getQuizByEtape(e.id);
+    if (quizList.find((q) => q.id === id)) {
+      etapeId = e.id;
+      parcoursId = p.id;
+      parcours = p;
+      etape = e;
+      break outer;
+    }
+  }
+}
+
+if (!etapeId) return Astro.redirect("/parcours");
+
+const questions = await getQuestionsByQuiz(id);
+if (questions.length === 0) return Astro.redirect("/parcours");
+
+const questionsAvecReponses = [];
+for (const q of questions) {
+  const reponses = await getReponsesByQuestion(q.id);
+  questionsAvecReponses.push({ ...q, reponses });
+}
+
+if (questionsAvecReponses.some((q) => q.reponses.length === 0)) {
+  return Astro.redirect("/parcours");
+}
+
+const parcoursOrdre = parcours?.ordre ?? "";
+const mascotDefault = "/svg/octy-content.svg";
+const mascotWrong = "/svg/octy-angry.svg";
+const scoreContinueHref = "/parcours";
+
+const parcoursQuizIds = [];
+if (parcoursId) {
+  const etapesParcours = await getEtapesByParcours(parcoursId);
+  for (const item of etapesParcours) {
+    const quizList = await getQuizByEtape(item.id);
+    parcoursQuizIds.push(...quizList.map((quizItem) => quizItem.id).filter(Boolean));
+  }
+}
+const parcoursQuizPayload = JSON.stringify(parcoursQuizIds).replace(/</g, "\\u003c");
+---
+
+<Layout titre="Quiz - Octy">
+  <div class="quiz-page">
+    <div
+      id="meta"
+      data-parcours-id={parcoursId}
+      data-etape-id={etapeId}
+      data-quiz-id={id}
+      data-total-questions={questions.length}
+      class="hidden"
+    ></div>
+
+    <main class="quiz-shell">
+      <img src="/svg/vagues.svg" alt="" class="quiz-waves" aria-hidden="true" />
+
+      {questionsAvecReponses.map((q, qIndex) => (
+        <section
+          data-question={qIndex}
+          class={`question-item ${qIndex === 0 ? "is-active" : ""}`}
+          aria-labelledby={`quiz-question-${qIndex}-title`}
+          aria-describedby={`quiz-question-${qIndex}-progress`}
+        >
+          <div class="quiz-hero">
+            <img src="/svg/herocours.svg" alt="" aria-hidden="true" class="hero-shape" />
+
+            <div class="hero-copy">
+              <p class="parcours-label">Parcours {parcoursOrdre}</p>
+              <h1 id={`quiz-question-${qIndex}-title`}>{q.texte_question}</h1>
+            </div>
+          </div>
+
+          <p id={`quiz-question-${qIndex}-progress`} class="sr-only">Question {qIndex + 1} sur {questions.length}</p>
+
+          <div class="quiz-stage">
+            <article class="quiz-bubble">
+              <img src="/svg/bulle_cours_body.svg" alt="" aria-hidden="true" class="bubble-shape" />
+              <div class="answers-grid">
+                {q.reponses.map((r) => (
+                  <button
+                    class="answer-btn"
+                    type="button"
+                    data-correct={r.est_correcte}
+                    aria-pressed="false"
+                  >
+                    {r.texte_reponse}
+                  </button>
+                ))}
+              </div>
+            </article>
+
+            <img src="/svg/bulle_cours_tail.svg" alt="" aria-hidden="true" class="bubble-tail" />
+
+            <div class="quiz-mascot-zone">
+              <img
+                src={mascotDefault}
+                alt=""
+                aria-hidden="true"
+                class="mascot mascot-default"
+              />
+              <img
+                src={mascotWrong}
+                alt=""
+                aria-hidden="true"
+                class="mascot mascot-wrong"
+              />
+              <button id={qIndex === 0 ? "btn-next" : undefined} class="quiz-next" type="button" aria-label="Question suivante" aria-disabled="true">
+                <img src="/svg/fleche_cours.svg" alt="" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        </section>
+      ))}
+
+      <p class="sr-only" data-quiz-feedback aria-live="polite" aria-atomic="true"></p>
+
+      <script type="application/json" id="quiz-parcours-data" set:html={parcoursQuizPayload}></script>
+
+      <section id="ecran-score" class="score-screen hidden" tabindex="-1">
+        <div class="quiz-hero">
+          <img src="/svg/herocours.svg" alt="" aria-hidden="true" class="hero-shape" />
+          <div class="hero-copy">
+            <p class="parcours-label">Parcours {parcoursOrdre}</p>
+            <h1>Résultat</h1>
+          </div>
+        </div>
+
+        <div class="quiz-stage">
+          <article class="quiz-bubble score-bubble">
+            <img src="/svg/bulle_cours_body.svg" alt="" aria-hidden="true" class="bubble-shape" />
+            <div class="score-copy" aria-live="polite">
+              <p id="score-final"></p>
+              <p id="score-detail"></p>
+              <a href={scoreContinueHref} class="score-link">Retour au parcours</a>
+            </div>
+          </article>
+        </div>
+
+        <svg class="score-bolt" viewBox="0 105 121 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M68.3728 299.812L50.4213 322.352L3.33786e-06 225.5L0 113L13.3674 105L54.1803 271.369L71.3647 251.512L121 405L68.3728 299.812Z" fill="#FFCFA5"/>
+        </svg>
+
+        <div class="score-mascot-layer" aria-hidden="true">
+          <img src="/svg/octy-content.svg" alt="" class="score-mascot" />
+        </div>
+
+        <p class="score-xp">+1 niveau d&rsquo;xp&nbsp;!</p>
+
+        <a href={scoreContinueHref} class="score-next" aria-label="Continuer le parcours">
+          <img src="/svg/fleche_cours.svg" alt="" aria-hidden="true" />
+        </a>
+      </section>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .quiz-page {
+    height: calc(100dvh - 210px);
+    min-height: 0;
+    overflow: hidden;
+    background: #eb6856;
+    color: #ffcfa5;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  .hidden,
+  .question-item:not(.is-active) {
+    display: none;
+  }
+
+  .quiz-shell {
+    position: relative;
+    height: 100%;
+  }
+
+  .quiz-waves {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .quiz-hero {
+    position: relative;
+    z-index: 10;
+    height: 276px;
+    overflow: visible;
+  }
+
+  .hero-shape {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 108vw;
+    min-width: 468px;
+    height: 276px;
+    transform: translateX(-50%);
+    object-fit: fill;
+  }
+
+  .hero-copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    height: 230px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 38px 0;
+    text-align: center;
+  }
+
+  .parcours-label {
+    margin: 0 0 12px;
+    color: #ffcfa5;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 20px;
+  }
+
+  .hero-copy h1 {
+    max-width: 340px;
+    margin: 0;
+    color: #ffcfa5;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 32px;
+    text-transform: none;
+  }
+
+  .quiz-stage {
+    position: relative;
+    --bubble-width: max(407px, calc(100vw + 14px));
+    height: calc(100% - 210px);
+    min-height: 430px;
+    margin-top: -66px;
+  }
+
+  .quiz-bubble {
+    position: relative;
+    z-index: 1;
+    width: var(--bubble-width);
+    aspect-ratio: 407 / 418;
+    margin: 0 0 0 50%;
+    transform: translateX(-50%);
+  }
+
+  .bubble-shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bubble-tail {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    z-index: 30;
+    width: var(--bubble-width);
+    aspect-ratio: 407 / 418;
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+
+  .answers-grid {
+    position: absolute;
+    left: 50%;
+    top: 104px;
+    z-index: 2;
+    display: grid;
+    width: min(316px, calc(100vw - 76px));
+    transform: translateX(-50%);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 18px;
+  }
+
+  .answer-btn {
+    min-height: 94px;
+    border: 2px solid transparent;
+    border-radius: 13px;
+    background: #e44d4c;
+    color: #ffcfa5;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 19px;
+    padding: 11px 12px;
+    text-align: center;
+  }
+
+  .answer-btn.is-muted {
+    background: #d7c9bd;
+    color: #787878;
+  }
+
+  .answer-btn.is-correct {
+    border-color: #1f6d14;
+    background: #b7bf82;
+    color: #1f6d14;
+  }
+
+  .answer-btn.is-wrong {
+    border-color: #e44d4c;
+    background: #ee947b;
+    color: #e44d4c;
+  }
+
+  .quiz-mascot-zone {
+    position: absolute;
+    left: 54px;
+    top: auto;
+    bottom: -30px;
+    z-index: 20;
+    width: 160px;
+    height: 140px;
+    margin: 0;
+  }
+
+  .mascot {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 150px;
+    max-width: none;
+    height: 140px;
+    object-fit: contain;
+    object-position: left bottom;
+    opacity: 1;
+    pointer-events: none;
+    transform: translate3d(0, 0, 0) scale(1);
+    transform-origin: 50% 100%;
+    transition:
+      opacity 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+
+  .mascot-wrong {
+    opacity: 0;
+    transform: translate3d(-8px, 6px, 0) rotate(-2deg) scale(0.98);
+  }
+
+  .quiz-mascot-zone.is-wrong .mascot-default {
+    opacity: 0;
+    transform: translate3d(6px, 2px, 0) rotate(1deg) scale(0.99);
+  }
+
+  .quiz-mascot-zone.is-wrong .mascot-wrong {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    animation: mascot-wrong-reaction 360ms cubic-bezier(0.2, 0.9, 0.2, 1);
+  }
+
+  @keyframes mascot-wrong-reaction {
+    0% {
+      transform: translate3d(-8px, 6px, 0) rotate(-2deg) scale(0.98);
+    }
+
+    58% {
+      transform: translate3d(2px, -3px, 0) rotate(0.7deg) scale(1.015);
+    }
+
+    100% {
+      transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mascot {
+      transition: opacity 120ms ease;
+    }
+
+    .quiz-mascot-zone.is-wrong .mascot-wrong {
+      animation: none;
+    }
+  }
+
+  .quiz-next {
+    position: absolute;
+    top: 112px;
+    right: -104px;
+    z-index: 8;
+    display: flex;
+    width: 52px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .quiz-next img {
+    width: 46px;
+    height: 28px;
+  }
+
+  .score-screen {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    background: #eb6856;
+    isolation: isolate;
+  }
+
+  .score-screen .quiz-hero {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: 292px;
+    overflow: visible;
+  }
+
+  .score-screen .quiz-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: max(430px, 112vw);
+    height: 292px;
+    border-radius: 0 0 50% 50% / 0 0 22% 22%;
+    background: #ffcfa5;
+    transform: translateX(-50%);
+  }
+
+  .score-screen .hero-shape,
+  .score-screen .parcours-label,
+  .score-screen .bubble-shape,
+  .score-final,
+  .score-link {
+    display: none;
+  }
+
+  .score-screen .hero-copy {
+    position: relative;
+    z-index: 1;
+    display: block;
+    height: auto;
+    padding: 47px 38px 0;
+    text-align: center;
+  }
+
+  .score-screen .hero-copy h1 {
+    margin: 0;
+    color: #e44d4c;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 32px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .score-screen .quiz-stage {
+    position: static;
+    height: 0;
+    min-height: 0;
+    margin: 0;
+  }
+
+  .score-bubble {
+    position: static;
+    width: auto;
+    min-height: 0;
+    margin: 0;
+    transform: none;
+  }
+
+  .score-copy {
+    position: absolute;
+    left: 50%;
+    top: 130px;
+    z-index: 3;
+    width: min(326px, calc(100vw - 54px));
+    transform: translateX(-50%);
+    color: #e44d4c;
+    text-align: center;
+  }
+
+  .score-copy p:nth-child(2) {
+    margin: 0;
+    color: #e44d4c;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 18px;
+  }
+
+  .score-bolt {
+    position: absolute;
+    left: 0;
+    top: 190px;
+    z-index: 5;
+    width: 121px;
+    height: 300px;
+    pointer-events: none;
+  }
+
+  .score-mascot-layer {
+    position: absolute;
+    left: 50%;
+    bottom: 80px;
+    z-index: 4;
+    width: min(319px, calc(100vw - 72px));
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+
+  .score-mascot {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .score-xp {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 6;
+    display: flex;
+    width: min(260px, 66vw);
+    height: 55px;
+    align-items: center;
+    border-radius: 0 22px 0 0;
+    background: rgba(255, 207, 165, 0.22);
+    color: #ffcfa5;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 26px;
+    margin: 0;
+    padding-left: 31px;
+  }
+
+  .score-screen[data-result="retry"] .score-xp {
+    display: none;
+  }
+
+  .score-screen[data-result="retry"] .score-copy {
+    top: 118px;
+  }
+
+  .score-next {
+    position: absolute;
+    right: 38px;
+    bottom: 42px;
+    z-index: 7;
+    display: flex;
+    width: 52px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-next img {
+    width: 46px;
+    height: 28px;
+  }
+
+  @media (max-width: 360px) {
+    .hero-copy h1 {
+      font-size: 29px;
+      line-height: 30px;
+    }
+
+    .answers-grid {
+      width: min(302px, calc(100vw - 58px));
+      gap: 12px 14px;
+    }
+
+    .answer-btn {
+      min-height: 88px;
+      font-size: 16px;
+      line-height: 18px;
+    }
+
+    .quiz-mascot-zone {
+      bottom: -58px;
+      left: 46px;
+    }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  import { completeQuizProgress, getProgressPercent, parseJson } from '../../js/progression.mjs';
+  import { createOrUpdateProgression, getProgressionByParcours } from '../../js/backend.mjs';
+
+  let questionActuelle = 0;
+  let score = 0;
+
+  const questionItems = document.querySelectorAll(".question-item");
+  const ecranScore = document.querySelector("#ecran-score");
+  const meta = document.querySelector("#meta");
+  const quizFeedback = document.querySelector("[data-quiz-feedback]");
+  const parcoursData = document.getElementById("quiz-parcours-data");
+  const quizId = meta?.dataset.quizId || "";
+  const parcoursId = meta?.dataset.parcoursId || "";
+  const totalQuestions = Number.parseInt(meta?.dataset.totalQuestions || "0", 10);
+  const parcoursQuizIds = parseJson(parcoursData?.textContent) || [];
+
+  function setQuizFeedback(message) {
+    if (quizFeedback) {
+      quizFeedback.textContent = message;
+    }
+  }
+
+  function awardQuizXp() {
+    return completeQuizProgress({ quizId, parcoursId });
+  }
+
+  async function saveQuizProgressToPocketBase(localProgress) {
+    if (!localProgress || !localProgress.userId || localProgress.userId === "guest") return;
+    if (!quizId || !parcoursId) return;
+
+    try {
+      const pocketBaseProgress = await getProgressionByParcours(localProgress.userId, parcoursId);
+      const pocketBaseCompletedQuizzes = Array.isArray(pocketBaseProgress?.quiz_termines)
+        ? pocketBaseProgress.quiz_termines
+        : [];
+      const completedQuizzes = [
+        ...(localProgress.completedQuizzes || []),
+        ...pocketBaseCompletedQuizzes,
+        quizId,
+      ];
+      const percent = getProgressPercent(
+        parcoursQuizIds.length ? parcoursQuizIds : [quizId],
+        completedQuizzes,
+      );
+      await createOrUpdateProgression(localProgress.userId, parcoursId, quizId, percent);
+    } catch {
+      // localStorage reste la source de secours si PocketBase est indisponible.
+    }
+  }
+
+  function afficherQuestion(index, shouldFocus = false) {
+    questionItems.forEach((question) => {
+      question.classList.remove("is-active");
+      question.querySelector(".quiz-next").removeAttribute("id");
+    });
+
+    const current = questionItems[index];
+    const currentNext = current.querySelector(".quiz-next");
+    current.classList.add("is-active");
+    currentNext.id = "btn-next";
+    currentNext.setAttribute(
+      "aria-disabled",
+      current.dataset.answered === "true" ? "false" : "true",
+    );
+
+    bindNext(current);
+    setQuizFeedback(`Question ${index + 1} sur ${totalQuestions}`);
+
+    if (shouldFocus) {
+      const firstAnswer = current.querySelector(".answer-btn");
+      firstAnswer?.focus({ preventScroll: true });
+    }
+  }
+
+  function bindNext(section) {
+    const btnNext = section.querySelector(".quiz-next");
+
+    btnNext.onclick = () => {
+      if (section.dataset.answered !== "true") {
+        btnNext.setAttribute("aria-disabled", "true");
+        setQuizFeedback("Choisis une reponse avant de passer a la question suivante.");
+        return;
+      }
+
+      if (questionActuelle < totalQuestions - 1) {
+        questionActuelle++;
+        afficherQuestion(questionActuelle, true);
+      } else {
+        afficherScore();
+      }
+    };
+  }
+
+  function afficherScore() {
+    questionItems.forEach((question) => question.classList.remove("is-active"));
+    ecranScore.classList.remove("hidden");
+    ecranScore.focus({ preventScroll: true });
+
+    document.querySelector("#score-final").textContent = `${score} / ${totalQuestions}`;
+    document.querySelector("#score-detail").textContent =
+      score === totalQuestions
+        ? "Parfait !"
+        : score >= totalQuestions / 2
+          ? "Bien joué !"
+          : "Continue à t'entraîner !";
+  }
+
+  const afficherScoreBase = afficherScore;
+  afficherScore = () => {
+    afficherScoreBase();
+
+    const isPassed = score >= totalQuestions / 2;
+    const scoreTitle = ecranScore.querySelector(".hero-copy h1");
+    const scoreDetail = document.querySelector("#score-detail");
+    const scoreMascot = ecranScore.querySelector(".score-mascot");
+    const scoreXp = ecranScore.querySelector(".score-xp");
+    const localProgressResult = isPassed ? awardQuizXp() : { awarded: false, progress: null };
+    const xpAwarded = localProgressResult.awarded;
+
+    if (isPassed) {
+      saveQuizProgressToPocketBase(localProgressResult.progress);
+    }
+
+    ecranScore.dataset.result = isPassed ? "success" : "retry";
+
+    if (scoreTitle) {
+      scoreTitle.innerHTML = isPassed
+        ? "Questionnaire<br />valid&eacute;&nbsp;!"
+        : "Pas tout &agrave; fait&nbsp;!";
+    }
+
+    if (scoreDetail) {
+      scoreDetail.innerHTML = isPassed
+        ? "Bravo, tu as obtenu un score suffisant pour r&eacute;ussir ce questionnaire. Tu peux maintenant poursuivre ton parcours."
+        : "Tu &eacute;tais proche de la bonne r&eacute;ponse. Prends un moment pour revoir le cours si certaines notions ne sont pas encore claires, puis retente le questionnaire.";
+    }
+
+    if (scoreMascot) {
+      scoreMascot.src = isPassed ? "/svg/octy-content.svg" : "/svg/octy-sad.svg";
+    }
+
+    if (scoreXp) {
+      scoreXp.hidden = !xpAwarded;
+      scoreXp.textContent = "+1 niveau d'xp !";
+    }
+
+    setQuizFeedback(
+      isPassed
+        ? `Quiz valide. Score ${score} sur ${totalQuestions}.`
+        : `Quiz a retravailler. Score ${score} sur ${totalQuestions}.`,
+    );
+  };
+
+  questionItems.forEach((section) => {
+    const reponseBtns = section.querySelectorAll(".answer-btn");
+    const mascotZone = section.querySelector(".quiz-mascot-zone");
+
+    reponseBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (section.dataset.answered === "true") return;
+
+        const isCorrect = btn.dataset.correct === "true";
+        section.dataset.answered = "true";
+        if (isCorrect) score++;
+
+        reponseBtns.forEach((button) => {
+          const buttonText = button.textContent.trim();
+          button.disabled = true;
+          button.setAttribute("aria-disabled", "true");
+          button.setAttribute("aria-pressed", button === btn ? "true" : "false");
+          button.classList.add("is-muted");
+
+          if (button.dataset.correct === "true") {
+            button.classList.remove("is-muted");
+            button.classList.add("is-correct");
+            button.setAttribute("aria-label", `${buttonText} - bonne reponse`);
+          } else if (button === btn) {
+            button.setAttribute("aria-label", `${buttonText} - reponse selectionnee incorrecte`);
+          } else {
+            button.setAttribute("aria-label", `${buttonText} - non selectionnee`);
+          }
+        });
+
+        section.querySelector(".quiz-next")?.setAttribute("aria-disabled", "false");
+
+        if (!isCorrect) {
+          btn.classList.remove("is-muted");
+          btn.classList.add("is-wrong");
+          mascotZone.classList.add("is-wrong");
+        } else {
+          mascotZone.classList.remove("is-wrong");
+        }
+
+        setQuizFeedback(isCorrect ? "Bonne reponse. Tu peux passer a la question suivante." : "Mauvaise reponse. La bonne reponse est indiquee. Tu peux passer a la question suivante.");
+      });
+    });
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowRight") {
+      document.querySelector("#btn-next")?.click();
+    }
+  });
+
+  afficherQuestion(0);
+</script>

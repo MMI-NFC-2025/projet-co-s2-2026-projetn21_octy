@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import TexteAPropos from '../components/apropos/TexteAPropos.astro';
+import ProjetSection from '../components/apropos/ProjetSection.astro';
+import EquipeSection from '../components/apropos/EquipeSection.astro';
+
+const canonicalUrl = new URL('/a-propos', Astro.url).href;
+---
+
+<Layout titre="À propos - Octy" requireAuth={false}>
+  <Fragment slot="head">
+    <meta name="description" content="D&eacute;couvrez Octy, une web-app p&eacute;dagogique qui aide les jeunes adultes &agrave; comprendre les d&eacute;marches administratives pour agir en autonomie." />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content="&Agrave; propos - Octy" />
+    <meta property="og:description" content="D&eacute;couvrez Octy, une web-app p&eacute;dagogique qui aide les jeunes adultes &agrave; comprendre les d&eacute;marches administratives pour agir en autonomie." />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="&Agrave; propos - Octy" />
+    <meta name="twitter:description" content="D&eacute;couvrez Octy, une web-app p&eacute;dagogique qui aide les jeunes adultes &agrave; comprendre les d&eacute;marches administratives pour agir en autonomie." />
+  </Fragment>
+  <div class="about-page bg-orange">
+    <PageHero title="&Agrave; propos<br />d&rsquo;Octy" id="apropos-title" />
+    <TexteAPropos />
+    <ProjetSection />
+    <EquipeSection />
+  </div>
+</Layout>

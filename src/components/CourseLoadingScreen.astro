@@ -1,0 +1,357 @@
+---
+const linkSelector = '[data-course-loading-link]';
+const delayMs = 4200;
+const preloadTimeoutMs = 7000;
+---
+
+<div class="course-loading-screen" data-course-loading-screen aria-hidden="true" role="status">
+  <div class="loading-phone">
+    <img src="/svg/vagues.svg" alt="" class="loading-waves" aria-hidden="true" />
+
+    <div class="loading-top-beige">
+      <div class="loading-progress" aria-hidden="true">
+        <span class="loading-progress-fill"></span>
+      </div>
+
+      <div class="loading-copy">
+        <h2>CHARGEMENT EN<br />COURS...</h2>
+        <p>
+          Les informations d&rsquo;Octy sont<br />
+          indicatives et ne remplacent pas les<br />
+          institutions officielles.
+        </p>
+      </div>
+    </div>
+
+    <svg class="loading-bolt" viewBox="0 105 121 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M68.3728 299.812L50.4213 322.352L3.33786e-06 225.5L0 113L13.3674 105L54.1803 271.369L71.3647 251.512L121 405L68.3728 299.812Z" fill="#FFCFA5"/>
+    </svg>
+
+    <div class="loading-mascot-layer" aria-hidden="true">
+      <img
+        src="/svg/octy-content.svg"
+        alt=""
+        class="loading-mascot"
+        loading="eager"
+        decoding="sync"
+        fetchpriority="high"
+      />
+    </div>
+  </div>
+</div>
+
+<style>
+.course-loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: block;
+    overflow: hidden;
+    background: #eb6856;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 120ms ease, visibility 120ms ease;
+  }
+
+  .course-loading-screen.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  :global(html.course-loading-lock),
+  :global(html.course-loading-lock body) {
+    overflow: hidden;
+  }
+
+  .loading-phone {
+    position: absolute;
+    inset: 0;
+    isolation: isolate;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    background: #eb6856;
+    color: #ffcfa5;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  .loading-waves {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .loading-top-beige {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 1;
+    width: max(430px, 112vw);
+    height: 420px;
+    background: #ffcfa5;
+    border-radius: 0 0 50% 50% / 0 0 20% 20%;
+    transform: translateX(-50%);
+  }
+
+  .loading-bolt {
+    position: absolute;
+    left: 0;
+    top: 254px;
+    z-index: 30;
+    width: 121px;
+    height: 300px;
+    pointer-events: none;
+  }
+
+  .loading-progress {
+    position: absolute;
+    top: 42px;
+    left: 50%;
+    z-index: 2;
+    box-sizing: border-box;
+    width: min(315px, calc(100vw - 78px));
+    height: 34px;
+    border: 1.5px solid #f05d55;
+    border-radius: 999px;
+    background: #ffcfa5;
+    padding: 9px 10px;
+    transform: translateX(-50%);
+  }
+
+  .loading-progress-fill {
+    display: block;
+    width: 79%;
+    height: 100%;
+    border-radius: 999px 0 0 999px;
+    background: #ee6858;
+    transform: scaleX(0.01);
+    transform-origin: left center;
+  }
+
+  .course-loading-screen.is-visible .loading-progress-fill {
+    animation: loading-progress 3000ms ease-out forwards;
+  }
+
+  .loading-copy {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    z-index: 2;
+    width: min(330px, calc(100vw - 54px));
+    transform: translateX(-50%);
+    color: #e94d4f;
+    text-align: center;
+  }
+
+  .loading-copy h2 {
+    margin: 0 0 13px;
+    color: #e94d4f;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 32px;
+    text-transform: uppercase;
+  }
+
+  .loading-copy p {
+    margin: 0;
+    color: #e94d4f;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 18px;
+  }
+
+  .loading-mascot-layer {
+    position: absolute;
+    left: 50%;
+    top: 448px;
+    z-index: 20;
+    width: min(319px, calc(100vw - 72px));
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+
+  .loading-mascot {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @keyframes loading-progress {
+    0% {
+      transform: scaleX(0.01);
+    }
+
+    72% {
+      transform: scaleX(0.86);
+    }
+
+    100% {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (max-width: 360px) {
+    .loading-progress {
+      width: min(315px, calc(100vw - 44px));
+    }
+
+    .loading-copy h2 {
+      font-size: 28px;
+      line-height: 29px;
+    }
+
+    .loading-copy p {
+      font-size: 16px;
+      line-height: 17px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .course-loading-screen,
+    .course-loading-screen.is-visible .loading-progress-fill {
+      transition: none;
+      animation-duration: 1ms;
+    }
+  }
+</style>
+
+<script is:inline define:vars={{ linkSelector, delayMs, preloadTimeoutMs }}>
+  // @ts-nocheck
+  const loadingScreen = document.querySelector('[data-course-loading-screen]');
+  const preloadedPages = new Map();
+  const prefetchLinks = new Set();
+  let isLoading = false;
+
+  function hideLoadingScreen({ instant = false } = {}) {
+    if (loadingScreen) {
+      if (instant) {
+        // Désactive la transition pour une disparition immédiate (bfcache restore)
+        loadingScreen.style.transition = 'none';
+        loadingScreen.style.opacity = '0';
+        loadingScreen.style.visibility = 'hidden';
+        requestAnimationFrame(() => {
+          if (loadingScreen) {
+            loadingScreen.style.transition = '';
+            loadingScreen.style.opacity = '';
+            loadingScreen.style.visibility = '';
+          }
+        });
+      }
+      loadingScreen.classList.remove('is-visible');
+      loadingScreen.setAttribute('aria-hidden', 'true');
+    }
+    document.documentElement.classList.remove('course-loading-lock');
+    document.body.style.overflow = '';
+    isLoading = false;
+  }
+
+  function shouldIgnoreClick(event, link) {
+    return (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      link.target === '_blank' ||
+      link.href === window.location.href
+    );
+  }
+
+  function wait(ms) {
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
+  }
+
+  function prefetchDocument(href) {
+    const destination = new URL(href, window.location.href).href;
+    if (prefetchLinks.has(destination)) return;
+
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.as = 'document';
+    link.href = destination;
+    document.head.append(link);
+    prefetchLinks.add(destination);
+  }
+
+  function preloadPage(href) {
+    const destination = new URL(href, window.location.href).href;
+    prefetchDocument(destination);
+
+    if (preloadedPages.has(destination)) {
+      return preloadedPages.get(destination);
+    }
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), preloadTimeoutMs);
+    const request = fetch(destination, {
+      credentials: 'same-origin',
+      cache: 'force-cache',
+      signal: controller.signal,
+    })
+      .catch(() => undefined)
+      .finally(() => window.clearTimeout(timeoutId));
+
+    preloadedPages.set(destination, request);
+    return request;
+  }
+
+  async function showLoadingAndNavigate(href) {
+    if (!loadingScreen || isLoading) return;
+
+    isLoading = true;
+    const destination = new URL(href, window.location.href).href;
+    loadingScreen.classList.add('is-visible');
+    loadingScreen.setAttribute('aria-hidden', 'false');
+    document.documentElement.classList.add('course-loading-lock');
+
+    await Promise.allSettled([wait(delayMs), preloadPage(destination)]);
+    window.location.href = destination;
+  }
+
+  if (loadingScreen) {
+    window.octyShowCourseLoading = showLoadingAndNavigate;
+    window.octyPreloadPage = preloadPage;
+
+    window.addEventListener('octy:loading:navigate', (event) => {
+      const href = event.detail?.href;
+      if (href) {
+        showLoadingAndNavigate(href);
+      }
+    });
+
+    document.querySelectorAll(linkSelector).forEach((link) => {
+      ['pointerenter', 'pointerdown', 'focus', 'touchstart'].forEach((eventName) => {
+        link.addEventListener(eventName, () => preloadPage(link.href), { passive: true });
+      });
+
+      link.addEventListener('click', async (event) => {
+        if (shouldIgnoreClick(event, link)) return;
+
+        event.preventDefault();
+        showLoadingAndNavigate(link.href);
+      });
+    });
+
+    const preloadVisibleLinks = () => {
+      document.querySelectorAll(linkSelector).forEach((link) => preloadPage(link.href));
+    };
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(preloadVisibleLinks, { timeout: 1200 });
+    } else {
+      window.setTimeout(preloadVisibleLinks, 700);
+    }
+
+    window.addEventListener('pageshow', hideLoadingScreen);
+  }
+</script>
