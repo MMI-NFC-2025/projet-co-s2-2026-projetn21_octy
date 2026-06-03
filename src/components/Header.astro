@@ -255,6 +255,23 @@ const isCurrentHref = (href) => {
 
     if (!menu || !openButton || !closeButton) return;
 
+    const markHomeScrollReset = (link) => {
+      try {
+        const destination = new URL(link.href, window.location.href);
+        const isHomeLink = destination.origin === window.location.origin && destination.pathname === '/accueil';
+        const isFromCourseFlow = window.location.pathname.startsWith('/parcours/') || window.location.pathname.startsWith('/quiz/');
+
+        if (isHomeLink && isFromCourseFlow) {
+          sessionStorage.setItem('octyHomeResetScrollOnReturn', 'true');
+        }
+      } catch {
+      }
+    };
+
+    document.querySelectorAll('a[href="/accueil"]').forEach((link) => {
+      link.addEventListener('click', () => markHomeScrollReset(link));
+    });
+
     const setOpen = (open) => {
       if (open) {
         previousFocus = document.activeElement;

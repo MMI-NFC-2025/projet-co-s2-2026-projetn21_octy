@@ -16,7 +16,7 @@ const robotsContent = requireAuth ? 'noindex,nofollow' : null;
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     {robotsContent && <meta name="robots" content={robotsContent} />}
     <title>{titre}</title>
     <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -95,6 +95,8 @@ const robotsContent = requireAuth ? 'noindex,nofollow' : null;
 
   body.octy-layout-body {
     display: flex;
+    min-height: 100vh;
+    min-height: 100svh;
     min-height: 100dvh;
     flex-direction: column;
     margin: 0;
@@ -111,7 +113,9 @@ const robotsContent = requireAuth ? 'noindex,nofollow' : null;
   }
 
   .octy-layout-main > main,
-  .octy-layout-main > .about-page {
+  .octy-layout-main > .about-page,
+  .octy-layout-main > .course-page,
+  .octy-layout-main > .quiz-page {
     flex: 1 0 auto;
   }
 

@@ -136,7 +136,8 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
   .home-page {
     position: relative;
     min-height: 100vh;
-    overflow: hidden;
+    min-height: 100svh;
+    overflow-x: hidden;
     background: #eb6856;
     color: #ffcfa5;
     font-family: 'Source Sans 3', Inter, sans-serif;
@@ -148,7 +149,7 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
     left: 0;
     width: 100%;
     height: auto;
-    z-index: 1;
+    z-index: 0;
     pointer-events: none;
   }
 
@@ -162,14 +163,15 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
     background: #eb6856;
     padding: 52px 0 44px;
     text-align: center;
-    overflow: visible;
+    overflow: hidden;
   }
 
   .home-hero .home-waves {
     z-index: 0;
-    height: auto;
-    min-height: 100%;
-    object-fit: contain;
+    height: 100%;
+    min-height: 0;
+    object-fit: cover;
+    object-position: top center;
   }
 
   .home-mascot-frame {
@@ -261,7 +263,7 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
 
   .home-current .home-section-inner {
     position: relative;
-    z-index: 1;
+    z-index: 2;
   }
 
   .home-current .home-shape {
@@ -317,7 +319,7 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
 
   .home-recommended .home-section-inner {
     position: relative;
-    z-index: 1;
+    z-index: 2;
   }
 
   .home-recommended .home-section-inner h2 {
@@ -335,7 +337,7 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
 
   .home-more .home-section-inner {
     position: relative;
-    z-index: 1;
+    z-index: 2;
   }
 
   .home-card-stack {
@@ -589,6 +591,25 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
   };
 
   if (root instanceof HTMLElement && dataElement) {
+    const resetScrollFlag = 'octyHomeResetScrollOnReturn';
+    const resetHomeScroll = () => {
+      if (sessionStorage.getItem(resetScrollFlag) !== 'true') return;
+
+      sessionStorage.removeItem(resetScrollFlag);
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+
+      window.scrollTo(0, 0);
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        requestAnimationFrame(() => window.scrollTo(0, 0));
+      });
+    };
+
+    resetHomeScroll();
+    window.addEventListener('pageshow', resetHomeScroll);
+
     const userId = getCurrentUserId();
     const userNameTarget = root.querySelector('[data-user-name]');
     const userLevelTarget = root.querySelector('[data-user-level]');
@@ -668,6 +689,8 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
 
     root.querySelectorAll('[data-course-action]').forEach((link) => {
       link.addEventListener('click', () => {
+        sessionStorage.setItem(resetScrollFlag, 'true');
+
         const card = link.closest('[data-parcours-card]');
         const parcoursId = card instanceof HTMLElement ? card.dataset.parcoursId : null;
 

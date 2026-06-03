@@ -56,6 +56,7 @@
   .octy-auth-body {
     margin: 0;
     min-height: 100%;
+    overflow-x: hidden;
     background: #ffcfa5;
     color: #1f1a17;
     font-family: Inter, system-ui, sans-serif;
@@ -119,7 +120,7 @@
   }
 
   .body {
-    padding: 18px 26px 28px;
+    padding: 18px clamp(18px, 6.6vw, 26px) 28px;
     text-align: center;
   }
 
@@ -135,7 +136,7 @@
   }
 
   form {
-    width: min(100%, 322px);
+    width: min(310px, calc(100vw - 68px));
     margin: 0 auto;
     text-align: left;
   }
@@ -246,20 +247,21 @@
   }
 
   .bottom-copy {
+    width: min(100%, calc(100vw - 48px));
     margin: 8px 0;
     color: #e44d4c;
     font-family: "Source Sans 3", Inter, sans-serif;
-    font-size: 1.8rem;
+    font-size: clamp(1.38rem, 6.4vw, 1.68rem);
     font-weight: 500;
-    line-height: 0.95;
-    letter-spacing: 0.03em;
+    line-height: 1;
+    letter-spacing: 0;
     text-align: center;
     text-transform: uppercase;
   }
 
   .bottom-button {
     display: block;
-    width: min(310px, 100%);
+    width: min(310px, calc(100vw - 68px));
     height: 51px;
     margin: 6px auto 8px;
     border: 0;
@@ -278,7 +280,7 @@
 
   @media (max-width: 360px) {
     .body {
-      padding-inline: 22px;
+      padding-inline: 18px;
     }
 
     .title {
