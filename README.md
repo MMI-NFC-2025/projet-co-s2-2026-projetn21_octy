@@ -3,20 +3,20 @@
 
 Éléménts à renseigner pour la soutenance :
 
-- [ ] Nom du projet :
-- [ ] URL de la landing page :
-- [ ] URL de l'application finale :
-- [ ] URL de connexion au back office :
-- [ ] Identifiant de connexion au backoffice :
-- [ ] Mot de passe de connexion au backoffice :
-- [ ] URL de la maquette FIGMA :
-- [ ] Description du projet :
+- [ ] Nom du projet : Octy
+- [ ] URL de la landing page : http://octy-landing.antonin-seichepine.fr/
+- [ ] URL de l'application finale : http://octy.antonin-seichepine.fr/
+- [ ] URL de connexion au back office : https://octypb.antonin-seichepine.fr/_/
+- [ ] Identifiant de connexion au backoffice : antonin.seichepine25@gmail.com
+- [ ] Mot de passe de connexion au backoffice : Sc990306
+- [ ] URL de la maquette FIGMA : https://www.figma.com/design/IgvZKsrwKz8tCZrJ3BbjiB/MAQUETTE_Octy_Antonin-SEICHEPINE_Elisa-SALTINI_L%C3%A9onie-PRUNIAUX?node-id=1-2&t=yAq2MB62ABivDoq0-1
+- [ ] Description du projet : Octy est une application qui aide les jeunes à comprendre leurs démarches administratives pour pouvoir agir sereinement.
 
 ## 🚀 Équipe
 
 | Étudiants    | Prénom NOM  |
 | :----------- | :---------- |
-| Étudiant 1   | à compléter |
-| Étudiant 2   | à compléter |
-| Étudiant 3   | à compléter |
-| (Étudiant 4) | à compléter |
+| Antonin      | Seichepine |
+| Elisa        | Saltini |
+| Léonie       | Pruniaux |
+
