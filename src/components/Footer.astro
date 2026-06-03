@@ -1,0 +1,92 @@
+---
+// Footer Octy
+
+import footerBackgroundUrl from '../assets/svg/footer-background.svg?url';
+import desktopWaveUrl from '../assets/svg/desktop-wave.svg?url';
+
+const { waveBg = 'bg-orange' } = Astro.props;
+---
+
+<footer>
+  <!-- Vague du footer : SVG exact avec debordement lateral -->
+  <div class:list={[waveBg, '-mt-px safe-overflow overflow-hidden lg:hidden']}>
+    <div class="decor-wave-bleed relative h-[41px]">
+      <img
+        src={footerBackgroundUrl}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        class="absolute left-0 top-0 block h-auto w-full max-w-none"
+      />
+    </div>
+  </div>
+
+  <div class:list={[waveBg, '-mt-px hidden overflow-hidden lg:block']}>
+    <div class="relative h-[78px] w-[112%] -ml-[6%] xl:h-[98px]">
+      <img
+        src={desktopWaveUrl}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        class="absolute inset-x-0 top-0 block h-auto w-full max-w-none [transform:scaleY(-1)]"
+      />
+    </div>
+  </div>
+
+  <!-- Contenu du footer -->
+  <div class="bg-red px-7 pt-6 pb-10 lg:px-10">
+    <div class="lg:mx-auto lg:max-w-336 lg:mygrid lg:items-start lg:gap-y-0">
+
+      <!-- Col gauche : disclaimer + mascotte -->
+      <div class="lg:col-start-1 lg:col-span-9 lg:flex lg:flex-col lg:gap-8">
+        <p class="text-beige text-base font-medium leading-relaxed">
+          Octy est un outil pédagogique d'information.<br />
+          Les contenus proposés ne remplacent pas les informations officielles des administrations.
+        </p>
+
+        <div class="flex justify-center my-10 lg:my-0 lg:justify-start">
+          <svg width="120" height="120" viewBox="0 0 218 218" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="109" cy="109" r="104" fill="#E44D4C" stroke="#FFCFA5" stroke-width="10"/>
+            <g clip-path="url(#clip0_footer_desk)">
+              <path d="M180.208 133.377C180.208 145.485 170.406 155.296 158.318 155.296C156.22 155.296 154.191 154.997 152.263 154.447C152.277 154.725 152.283 155.011 152.283 155.296C152.283 167.397 142.482 177.209 130.393 177.209C118.305 177.209 108.503 167.397 108.503 155.296C108.503 167.397 98.7021 177.209 86.6134 177.209C74.5247 177.209 64.7166 167.397 64.7166 155.296C64.7166 155.011 64.7234 154.732 64.7302 154.453C62.8093 155.004 60.7798 155.296 58.6893 155.296C46.5938 155.296 36.7925 145.485 36.7925 133.377C36.7925 123.083 43.8855 114.447 53.4492 112.103C52.3768 107.761 51.8134 103.215 51.8134 98.5406C51.8134 67.2038 77.1922 41.792 108.503 41.792C139.815 41.792 165.193 67.2038 165.193 98.5406C165.193 103.215 164.63 107.761 163.558 112.103C173.114 114.447 180.208 123.083 180.208 133.377Z" fill="url(#paint0_footer_desk)" stroke="#FBCFA6" stroke-width="5" stroke-miterlimit="10"/>
+              <path d="M86.023 117.063C76.9616 117.797 68.9386 109.249 68.1105 97.9767C68.097 97.7389 68.0766 97.4942 68.0698 97.2564C70.4523 94.7696 74.3619 91.8004 80.0228 90.7676C79.4798 92.4458 79.1811 94.328 79.1811 96.3052C79.1811 103.677 83.3691 109.663 88.5344 109.663C93.6998 109.663 97.8809 103.684 97.8809 96.3052C97.8809 95.3268 97.8063 94.3687 97.6637 93.4514C98.709 93.8999 99.7747 94.4027 100.874 94.9666C100.895 95.0822 100.908 95.2045 100.915 95.32C101.743 106.592 95.0709 116.329 86.0162 117.056L86.023 117.063Z" fill="#F0E4E9"/>
+              <path d="M97.8876 96.298C97.8876 103.67 93.6996 109.656 88.541 109.656C83.3825 109.656 79.1877 103.677 79.1877 96.298C79.1877 94.3208 79.4864 92.4387 80.0294 90.7604C84.6789 89.9179 90.5162 90.3663 97.6704 93.4511C97.8129 94.3683 97.8876 95.3264 97.8876 96.3048V96.298Z" fill="#C22D2B"/>
+              <path d="M131.018 117.246C140.079 117.98 148.102 109.433 148.93 98.1603C148.944 97.9224 148.964 97.6778 148.971 97.44C146.589 94.9532 142.679 91.984 137.018 90.9512C137.561 92.6294 137.86 94.5116 137.86 96.4888C137.86 103.861 133.672 109.847 128.506 109.847C123.341 109.847 119.16 103.868 119.16 96.4888C119.16 95.5104 119.235 94.5523 119.377 93.635C118.332 94.0835 117.266 94.5863 116.167 95.1502C116.146 95.2658 116.133 95.3881 116.126 95.5036C115.298 106.776 121.97 116.513 131.025 117.24L131.018 117.246Z" fill="#F0E4E9"/>
+              <path d="M119.153 96.4884C119.153 103.861 123.341 109.847 128.5 109.847C133.658 109.847 137.853 103.867 137.853 96.4884C137.853 94.5112 137.554 92.6291 137.011 90.9508C132.362 90.1083 126.524 90.5567 119.37 93.6415C119.228 94.5588 119.153 95.5168 119.153 96.4952V96.4884Z" fill="#C22D2B"/>
+              <path d="M80.5385 97.379C82.1354 97.379 83.43 96.9135 83.43 96.3394C83.43 95.7652 82.1354 95.2998 80.5385 95.2998C78.9415 95.2998 77.647 95.7652 77.647 96.3394C77.647 96.9135 78.9415 97.379 80.5385 97.379Z" fill="white"/>
+              <path d="M136.557 97.379C138.153 97.379 139.448 96.9135 139.448 96.3394C139.448 95.7652 138.153 95.2998 136.557 95.2998C134.96 95.2998 133.665 95.7652 133.665 96.3394C133.665 96.9135 134.96 97.379 136.557 97.379Z" fill="white"/>
+              <path d="M116.316 119.278C116.316 119.278 116.323 119.312 116.316 119.332C116.248 119.855 115.943 120.351 115.447 120.637C114.972 120.909 114.415 120.936 113.94 120.752C113.852 120.705 113.764 120.664 113.669 120.623C112.216 119.971 110.472 119.597 108.598 119.597C106.481 119.597 104.539 120.08 102.985 120.888C102.972 120.902 102.958 120.909 102.944 120.915C102.87 120.956 102.802 120.99 102.727 121.024C101.926 121.35 100.983 121.038 100.542 120.27C100.392 120.019 100.318 119.747 100.311 119.475C100.311 119.332 100.318 119.19 100.338 119.047C100.698 115.901 104.125 113.435 108.32 113.435C112.203 113.435 115.434 115.554 116.173 118.374C116.248 118.673 116.296 118.972 116.316 119.278Z" fill="#C22D2B"/>
+            </g>
+            <defs>
+              <radialGradient id="paint0_footer_desk" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(108.503 109.5) scale(124.756 124.885)">
+                <stop offset="0.3" stop-color="#E33D3D"/>
+                <stop offset="0.94" stop-color="#BC201F"/>
+              </radialGradient>
+              <clipPath id="clip0_footer_desk">
+                <rect width="149" height="141" fill="white" transform="translate(34 39)"/>
+              </clipPath>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Séparateur mobile -->
+      <div class="h-0.5 bg-beige -mx-7 mb-8 lg:hidden"></div>
+
+      <!-- Col droite : nav + copyright -->
+      <div class="lg:col-start-12 lg:col-span-9 lg:flex lg:flex-col lg:justify-between">
+        <nav class="flex flex-col gap-3 mb-8 lg:mb-0" aria-label="Navigation pied de page">
+          <a href="/" class="text-beige text-lg font-heading font-semibold">Accueil</a>
+          <a href="/a-propos" class="text-beige text-lg font-heading font-semibold">À propos</a>
+          <a href="/partenaires" class="text-beige text-lg font-heading font-semibold">Partenaires</a>
+          <a href="/contact" class="text-beige text-lg font-heading font-semibold">Contact</a>
+        </nav>
+
+        <p class="text-beige text-xs lg:mt-8">
+          Octy © 2026 - Antonin Seichepine, Elisa Saltini, Léonie Pruniaux
+        </p>
+      </div>
+
+    </div>
+  </div>
+</footer>

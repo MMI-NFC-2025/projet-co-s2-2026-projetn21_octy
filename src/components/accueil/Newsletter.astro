@@ -1,0 +1,72 @@
+---
+---
+
+<section class="section-responsive safe-overflow relative -mt-16 left-1/2 w-screen max-w-none -translate-x-1/2 overflow-hidden bg-beige lg:mt-0 lg:bg-beige lg:pt-20 lg:pb-28">
+  <div class="mobile-artboard relative aspect-393/558 lg:contents" style="--mobile-artboard-xs-min-height: 34rem;">
+  <div class="decor-bg lg:hidden" aria-hidden="true">
+    <svg class="decor-svg" preserveAspectRatio="xMidYMid slice" width="393" height="558" viewBox="0 0 393 558" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect class="fill-beige" x="0.000146461" y="489" width="262" height="69"/>
+      <circle class="fill-beige" cx="261.5" cy="523.5" r="34.5"/>
+      <rect class="fill-beige" width="393" height="524" transform="matrix(-1 4.37114e-08 4.37114e-08 1 393 0)"/>
+    </svg>
+  </div>
+
+  <div class="pointer-events-none absolute inset-x-0 bottom-0 z-0 hidden h-[72px] lg:block xl:h-[84px]" aria-hidden="true">
+    <svg class="h-full w-full" preserveAspectRatio="none" viewBox="0 489 393 69" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect class="fill-beige" x="0.000146461" y="489" width="262" height="69"/>
+      <circle class="fill-beige" cx="261.5" cy="523.5" r="34.5"/>
+    </svg>
+  </div>
+
+  <div class="relative z-10 mx-auto flex h-full w-full max-w-92 flex-col px-7 pt-20 lg:h-auto lg:max-w-336 lg:px-8 lg:pt-0 lg:mygrid lg:items-center">
+
+    <!-- Texte (gauche desktop) -->
+    <div class="lg:col-start-1 lg:col-span-8">
+      <p class="font-heading font-semibold text-base text-red text-center uppercase tracking-wide mb-2 lg:text-left">
+        Newsletter
+      </p>
+
+      <h2 class="font-heading font-bold text-[2.25rem] leading-[1.05] text-red text-center uppercase mb-6 lg:text-left">
+        Suivez le lancement d'Octy
+      </h2>
+
+      <p class="font-sans font-bold text-base text-red mb-8 lg:mb-0">
+        Soyez informé du lancement et des nouvelles fonctionnalités !
+      </p>
+    </div>
+
+    <!-- Formulaire (droite desktop) -->
+    {/* TODO newsletter: ajouter action="..." quand le service d'inscription sera validé. */}
+    <form method="post" class="lg:col-start-10 lg:col-span-9 lg:flex lg:flex-col lg:gap-4">
+      <label for="newsletter-email" class="sr-only">Adresse email</label>
+      <input
+        id="newsletter-email"
+        type="email"
+        name="email"
+        autocomplete="email"
+        required
+        aria-required="true"
+        aria-describedby="newsletter-email-error"
+        placeholder="Votre email"
+        class="w-full bg-transparent border-b border-red pb-2 mb-6 font-sans text-base text-red placeholder:text-red/60 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red lg:mb-0"
+      />
+      <p id="newsletter-email-error" class="sr-only" aria-live="polite"></p>
+
+      <button
+        type="submit"
+        class="inline-flex w-full items-center justify-center gap-3 rounded-[20px] bg-red px-7 py-4 font-sans text-[1.05rem] font-bold text-beige mb-4 lg:mb-0"
+      >
+        <svg width="33" height="14" viewBox="0 0 33 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M0 13.087V0.608696L21 4.26087L20.7 3.28344e-06L33 6.39131L20.7 14L21 9.73913L0 13.087Z" fill="currentColor"/>
+        </svg>
+        S'inscrire
+      </button>
+
+      <p class="font-sans text-xs text-saumon text-center">
+        En vous inscrivant, vous acceptez nos conditions d'utilisation.
+      </p>
+    </form>
+
+  </div>
+  </div>
+</section>

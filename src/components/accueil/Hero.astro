@@ -1,0 +1,89 @@
+---
+import heroMockup from "../../assets/mockup-application-octy.png";
+import HeroShape from "../common/HeroShape.astro";
+---
+
+{/* ── Mobile : HeroShape avec H1 (inchangé) ─────────────────────────────── */}
+<div class="lg:hidden">
+  <HeroShape backgroundClass="bg-orange" contentClass="px-7 pt-8">
+    <h1
+      class="mx-auto max-w-[20rem] text-center font-heading text-[30px] font-bold leading-tight text-beige"
+    >
+      Comprenez le syst&egrave;me, acc&eacute;dez &agrave; vos aides et agissez en
+      autonomie !
+    </h1>
+  </HeroShape>
+
+  <section class="bg-orange pb-8">
+    <div class="px-7">
+      <p class="mt-4 mb-6 text-left font-sans text-base font-medium text-beige">
+        Octy aide &agrave; <span class="font-bold"
+          >comprendre les d&eacute;marches administratives</span
+        > gr&acirc;ce &agrave; des <span class="font-bold"
+          >parcours simples, expliqu&eacute;s &eacute;tape par &eacute;tape !</span
+        >
+      </p>
+
+      <div class="mb-6 flex justify-center">
+        <img
+          src={heroMockup.src}
+          alt="Aperçu de l'application Octy"
+          class="h-auto w-[900px]"
+        />
+      </div>
+
+      <div class="flex justify-center">
+        {/* TODO accessibilité: remplacer href="#" par la route cible quand elle sera validée. */}
+        <a
+          href="#"
+          class="inline-flex items-center gap-3 rounded-[13px] bg-beige px-6 py-3"
+        >
+          <svg width="33" height="14" viewBox="0 0 33 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M0 13.087V0.608696L21 4.26087L20.7 3.28344e-06L33 6.39131L20.7 14L21 9.73913L0 13.087Z" fill="#EB6856"></path>
+          </svg>
+          <span class="font-sans text-base font-bold text-orange">Commencer un parcours</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+
+{/* ── Desktop : grille 20 colonnes ───────────────────────────────────────── */}
+<section class="hidden lg:block bg-orange">
+  <div class="mx-auto max-w-336 px-8 py-16 mygrid items-center">
+
+    {/* Colonne texte : cols 1–9 */}
+    <div class="col-start-1 col-span-9 flex flex-col gap-8">
+      <h1 class="font-heading text-[2.75rem] font-bold leading-[1.05] text-beige max-w-88">
+        Comprenez le syst&egrave;me, acc&eacute;dez &agrave; vos aides et agissez en autonomie !
+      </h1>
+
+      <p class="font-sans text-[1.05rem] font-medium leading-[1.6] text-beige max-w-104">
+        Octy aide &agrave; <span class="font-bold">comprendre les d&eacute;marches administratives</span> gr&acirc;ce &agrave; des <span class="font-bold">parcours simples, expliqu&eacute;s &eacute;tape par &eacute;tape !</span>
+      </p>
+
+      <div>
+        {/* TODO accessibilité: remplacer href="#" par la route cible quand elle sera validée. */}
+        <a
+          href="#"
+          class="inline-flex items-center gap-3 rounded-[13px] bg-beige px-7 py-4"
+        >
+          <svg width="33" height="14" viewBox="0 0 33 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M0 13.087V0.608696L21 4.26087L20.7 3.28344e-06L33 6.39131L20.7 14L21 9.73913L0 13.087Z" fill="#EB6856"></path>
+          </svg>
+          <span class="font-sans text-[1.05rem] font-bold text-orange">Commencer un parcours</span>
+        </a>
+      </div>
+    </div>
+
+    {/* Colonne mockup : cols 10–20 */}
+    <div class="col-start-10 col-span-11 flex items-center justify-center">
+      <img
+        src={heroMockup.src}
+        alt="Aperçu de l'application Octy"
+        class="h-auto w-full max-w-160"
+      />
+    </div>
+
+  </div>
+</section>

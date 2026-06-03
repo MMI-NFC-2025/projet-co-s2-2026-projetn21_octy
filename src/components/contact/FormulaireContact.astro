@@ -1,0 +1,53 @@
+---
+---
+
+<section class="section-responsive safe-overflow relative left-1/2 w-screen max-w-none -translate-x-1/2 bg-beige px-7 pt-10 pb-24 lg:-mt-2 lg:px-10 lg:pt-2 lg:pb-20">
+  <div class="mx-auto w-full max-w-92 lg:max-w-336 lg:mygrid lg:items-start">
+
+    <!-- Intro (gauche desktop) -->
+    <div class="lg:col-start-1 lg:col-span-6">
+      <p class="max-w-68 font-sans text-[1.05rem] font-bold leading-[1.55] text-orange">
+        Une question sur le projet Octy ? Vous pouvez nous contacter via ce formulaire.
+      </p>
+    </div>
+
+    <!-- Formulaire (droite desktop) -->
+    <form class="mt-10 flex flex-col gap-5 lg:col-start-8 lg:col-span-13 lg:-mt-12">
+      <label class="flex flex-col gap-2">
+        <span class="font-sans text-base text-noir">Nom*</span>
+        <input
+          type="text"
+          placeholder="Entre ton nom..."
+          class="h-14 rounded-[1.15rem] border border-salmon bg-transparent px-4 font-sans text-base text-orange placeholder:text-salmon/75 outline-none"
+        />
+      </label>
+
+      <label class="flex flex-col gap-2">
+        <span class="font-sans text-base text-noir">Email*</span>
+        <input
+          type="email"
+          placeholder="Entre ton Email..."
+          class="h-14 rounded-[1.15rem] border border-salmon bg-transparent px-4 font-sans text-base text-orange placeholder:text-salmon/75 outline-none"
+        />
+      </label>
+
+      <label class="flex flex-col gap-2">
+        <span class="font-sans text-base text-noir">Message*</span>
+        <textarea
+          placeholder="Entre ton message..."
+          class="min-h-88 rounded-[1.15rem] border border-salmon bg-transparent px-4 py-4 font-sans text-base text-orange placeholder:text-salmon/75 outline-none"
+        ></textarea>
+      </label>
+
+      <div class="mt-3 flex justify-end">
+        <button
+          type="submit"
+          class="inline-flex min-w-48 items-center justify-center rounded-[1.1rem] bg-red px-8 py-3.5 font-sans text-[1.05rem] font-bold text-beige"
+        >
+          Envoyer
+        </button>
+      </div>
+    </form>
+
+  </div>
+</section>

@@ -1,0 +1,92 @@
+---
+import redDividerUrl from '../../assets/svg/separateur-faq.svg?url';
+---
+
+<section class="section-responsive safe-overflow relative left-1/2 w-screen max-w-none -translate-x-1/2 overflow-hidden bg-beige lg:bg-beige lg:pt-20 lg:pb-28">
+  <div class="mobile-artboard relative aspect-393/695 lg:contents" style="--mobile-artboard-xs-min-height: 52rem;">
+  <div class="decor-bg lg:hidden" aria-hidden="true">
+    <svg class="decor-svg" preserveAspectRatio="xMidYMid slice" width="393" height="695" viewBox="0 0 393 695" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path class="fill-beige" d="M205.073 690.771C200.338 696.261 191.62 696.261 186.885 690.771C179.626 682.336 168.695 677 156.872 677C145.049 677 134.445 682.166 127.187 690.374C122.31 695.893 113.79 695.893 108.913 690.374C101.669 682.18 90.9932 677 79.2266 677C67.46 677 56.8839 682.138 49.6396 690.275C44.7912 695.724 36.2291 696.049 31.4375 690.558C24.1508 682.208 13.4048 676.958 1.42578 677C0.948469 677.002 0.472933 677.016 0 677.035V9.68214e-05H393V677.09C392.128 677.033 391.249 677 390.362 677C378.553 677 367.935 682.166 360.69 690.374C355.814 695.893 347.308 695.893 342.417 690.374C335.173 682.18 324.54 677 312.73 677C300.921 677 290.303 682.166 283.059 690.374C278.182 695.893 269.676 695.893 264.785 690.374C257.541 682.18 247.107 677 235.1 677C223.092 677 212.332 682.336 205.073 690.771Z"/>
+    </svg>
+  </div>
+
+  <div class="pointer-events-none absolute inset-x-0 bottom-0 z-0 hidden h-[72px] lg:block xl:h-[84px]" aria-hidden="true">
+    <svg class="h-full w-full" preserveAspectRatio="none" viewBox="0 677 393 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path class="fill-beige" d="M205.073 690.771C200.338 696.261 191.62 696.261 186.885 690.771C179.626 682.336 168.695 677 156.872 677C145.049 677 134.445 682.166 127.187 690.374C122.31 695.893 113.79 695.893 108.913 690.374C101.669 682.18 90.9932 677 79.2266 677C67.46 677 56.8839 682.138 49.6396 690.275C44.7912 695.724 36.2291 696.049 31.4375 690.558C24.1508 682.208 13.4048 676.958 1.42578 677C0.948469 677.002 0.472933 677.016 0 677.035V9.68214e-05H393V677.09C392.128 677.033 391.249 677 390.362 677C378.553 677 367.935 682.166 360.69 690.374C355.814 695.893 347.308 695.893 342.417 690.374C335.173 682.18 324.54 677 312.73 677C300.921 677 290.303 682.166 283.059 690.374C278.182 695.893 269.676 695.893 264.785 690.374C257.541 682.18 247.107 677 235.1 677C223.092 677 212.332 682.336 205.073 690.771Z"/>
+    </svg>
+  </div>
+
+  <div class="relative z-10 mx-auto flex h-full w-full max-w-92 flex-col px-7 pt-24 lg:h-auto lg:max-w-336 lg:px-8 lg:pt-0">
+    <p class="mb-2 text-center font-heading text-base font-semibold uppercase tracking-wide text-red lg:text-left">
+      FAQ :
+    </p>
+
+    <h2 class="mb-8 text-center font-heading text-[2.25rem] font-bold uppercase leading-[1.05] text-red lg:text-left lg:whitespace-nowrap">
+      <span class="block lg:inline">Questions</span>
+      <span class="block lg:ml-2 lg:inline">fr&eacute;quentes</span>
+    </h2>
+
+    <div class="lg:mygrid lg:mt-4 lg:items-start">
+      <div class="mb-6 lg:col-start-1 lg:col-span-6 lg:mb-0">
+        <div class="lg:flex lg:items-start lg:gap-4">
+          <img
+            src={redDividerUrl}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            class="hidden lg:block lg:h-32 lg:w-auto lg:shrink-0"
+          />
+          <div>
+            <p class="mb-1 font-sans text-base font-bold text-red">
+              Octy fait-il les d&eacute;marches &agrave; ma place ?
+            </p>
+            <p class="font-sans text-base font-medium text-saumon">
+              Non. Octy est un outil p&eacute;dagogique qui explique les d&eacute;marches afin que vous puissiez les r&eacute;aliser vous-m&ecirc;me.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-6 lg:col-start-8 lg:col-span-6 lg:mb-0">
+        <div class="lg:flex lg:items-start lg:gap-4">
+          <img
+            src={redDividerUrl}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            class="hidden lg:block lg:h-32 lg:w-auto lg:shrink-0"
+          />
+          <div>
+            <p class="mb-1 font-sans text-base font-bold text-red">
+              L'application est-elle gratuite ?
+            </p>
+            <p class="font-sans text-base font-medium text-saumon">
+              Les contenus essentiels sont gratuits. Un pack Premium permet d'acc&eacute;der &agrave; des fonctionnalit&eacute;s suppl&eacute;mentaires.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-start-15 lg:col-span-6">
+        <div class="lg:flex lg:items-start lg:gap-4">
+          <img
+            src={redDividerUrl}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            class="hidden lg:block lg:h-32 lg:w-auto lg:shrink-0"
+          />
+          <div>
+            <p class="mb-1 font-sans text-base font-bold text-red">
+              Les informations sont-elles fiables ?
+            </p>
+            <p class="font-sans text-base font-medium text-saumon">
+              Les contenus sont bas&eacute;s sur des donn&eacute;es publiques et renvoient vers les sites officiels des administrations.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>

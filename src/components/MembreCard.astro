@@ -1,0 +1,17 @@
+---
+const { membre } = Astro.props;
+---
+
+<article class="flex w-full max-w-[6.75rem] flex-col items-center gap-3 text-center">
+  <img
+    src={membre.image}
+    alt={`Portrait illustre de ${membre.prenom} ${membre.nom}`}
+    class="mx-auto h-[6.25rem] w-full max-w-[6.25rem] object-contain"
+    loading="lazy"
+  />
+
+  <p class="text-center font-sans text-[0.95rem] leading-[1.05] md:text-base">
+    <span class="block">{membre.prenom}</span>
+    <span class="block">{membre.nom}</span>
+  </p>
+</article>

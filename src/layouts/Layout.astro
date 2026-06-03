@@ -1,23 +1,115 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+const {
+  titre,
+  footerWaveBg = 'bg-orange',
+  headerWaveBg = 'bg-orange',
+  headerDivider = true,
+} = Astro.props;
+
+const seoTitle = 'Octy – Aide aux démarches administratives pour les jeunes';
+const seoDescription = 'Tu galères avec la CAF, les impôts ou le logement ? Octy t’explique chaque démarche étape par étape. Commence ton parcours gratuitement.';
+const isLanding = Astro.url.pathname === '/';
+const pageTitle = isLanding ? seoTitle : (titre ?? seoTitle);
+
+const softwareApplicationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Octy',
+  description: 'application pédagogique qui aide les jeunes à comprendre leurs démarches administratives',
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Web',
+  inLanguage: 'fr',
+  audience: {
+    '@type': 'PeopleAudience',
+    audienceType: 'jeunes adultes 18–29 ans',
+  },
+  offers: [
+    {
+      '@type': 'Offer',
+      name: 'Accès essentiel',
+      price: '0',
+      priceCurrency: 'EUR',
+    },
+    {
+      '@type': 'Offer',
+      name: 'Pack Premium',
+      price: '4.99',
+      priceCurrency: 'EUR',
+    },
+  ],
+};
+
+const faqPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  inLanguage: 'fr',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Octy fait-il les démarches à ma place ?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Non. Octy est un outil pédagogique qui explique les démarches afin que vous puissiez les réaliser vous-même.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: "L'application est-elle gratuite ?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Les contenus essentiels sont gratuits. Un pack Premium permet d'accéder à des fonctionnalités supplémentaires.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Les informations sont-elles fiables ?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Les contenus sont basés sur des données publiques et renvoient vers les sites officiels des administrations.',
+      },
+    },
+  ],
+};
+---
+
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={seoDescription} />
+    <!-- TODO SEO: ajouter le lien canonical quand l'URL finale du site Octy sera connue. -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={seoDescription} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    {isLanding && (
+      <>
+        <!-- TODO SEO: ajouter url/image dans le JSON-LD quand l'URL finale et une image publique pertinente seront connues. -->
+        <script type="application/ld+json" set:html={JSON.stringify(softwareApplicationJsonLd)}></script>
+        <script type="application/ld+json" set:html={JSON.stringify(faqPageJsonLd)}></script>
+      </>
+    )}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Source+Sans+3:wght@600;700&display=swap" rel="stylesheet">
+    <title>{pageTitle}</title>
+  </head>
+  <body class="font-sans text-base text-noir min-h-screen flex flex-col">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-beige focus:px-4 focus:py-2 focus:font-sans focus:text-sm focus:font-bold focus:text-red">
+      Aller au contenu
+    </a>
+    <Header showDivider={headerDivider} waveBg={headerWaveBg} />
+    <main id="main-content" class="bg-orange flex-1">
+      <slot />
+    </main>
+    <div class="relative z-10 -mt-10">
+      <Footer waveBg={footerWaveBg} />
+    </div>
+  </body>
+</html>

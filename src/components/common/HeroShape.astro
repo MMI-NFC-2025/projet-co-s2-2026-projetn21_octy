@@ -1,0 +1,29 @@
+---
+import heroBackgroundUrl from '../../assets/svg/hero-background.svg?url';
+
+const {
+  backgroundClass = 'bg-orange',
+  heightClass = '',
+  contentClass = 'px-7 pt-8',
+} = Astro.props;
+
+const wrapperClass = ['relative decor-wave-bleed', heightClass].filter(Boolean).join(' ');
+const imageClass = heightClass
+  ? 'absolute inset-x-0 bottom-0 block h-auto w-full max-w-none'
+  : 'block h-auto w-full max-w-none';
+---
+
+<section class:list={[backgroundClass, 'section-responsive safe-overflow overflow-hidden']}>
+  <div class={wrapperClass}>
+    <img
+      src={heroBackgroundUrl}
+      alt=""
+      aria-hidden="true"
+      class={imageClass}
+    />
+
+    <div class:list={['absolute inset-x-[10%] top-0', contentClass]}>
+      <slot />
+    </div>
+  </div>
+</section>

@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+/* ─── Système de grille desktop "mygrid" ─────────────────────────────────────
+   Usage : lg:mygrid sur un conteneur, lg:col-start-X lg:col-span-Y sur les enfants.
+   20 colonnes égales, gouttière 1.25rem (20px), activé via le préfixe lg: (≥1024px).
+   Utiliser avec un wrapper lg:max-w-[84rem] lg:mx-auto lg:px-8 pour le centrage.
+──────────────────────────────────────────────────────────────────────────────── */
+@utility mygrid {
+  display: grid;
+  grid-template-columns: repeat(20, minmax(0, 1fr));
+  column-gap: 1.25rem;
+}
+
+@theme {
+    /* Couleurs principales */
+    --color-beige: #FFCFA5;
+    --color-noir: #000000;
+    --color-saumon: #EA7D5E;
+    --color-orange: #EB6856;
+    --color-red: #E44D4C;
+    --color-gris: #787878;
+    --color-gris-clair: #D7C9BD;
+    --color-salmon: #EE947B;
+
+    /* Couleurs secondaires */
+    --color-vert: #1F6D14;
+    --color-vert-flou: #529149;
+    --color-rouge-fonce: #8C1B19;
+
+    /* Fonts */
+    --font-heading: 'Source Sans 3', sans-serif;
+    --font-sans: 'Inter', sans-serif;
+}
+
+@layer base {
+    .section {
+        @apply py-16;
+    }
+
+    .container-site {
+        @apply mx-auto w-[min(100%_-_2.5rem,72rem)];
+    }
+
+    .mobile-artboard {
+        @apply w-full min-h-[var(--mobile-artboard-xs-min-height,var(--mobile-artboard-sm-min-height,auto))] sm:mx-auto sm:max-w-[25rem] sm:min-h-[auto] md:max-w-[26rem] lg:mx-0 lg:max-w-none;
+    }
+}
+
+.section-responsive {
+    position: relative;
+    max-width: 100%;
+    isolation: isolate;
+}
+
+.safe-overflow {
+    overflow-x: clip;
+}
+
+.decor-bg {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.decor-svg {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+}
+
+.decor-wave-bleed {
+    width: 120%;
+    margin-left: -10%;
+}
+
+@media (min-width: 40rem) and (max-width: 63.999rem) {
+    .mobile-artboard {
+        max-width: min(100%, var(--mobile-artboard-tablet-max-width, clamp(26rem, 52vw, 30rem)));
+    }
+
+    .decor-wave-bleed {
+        width: min(116%, calc(100% + 5rem));
+        margin-left: max(-8%, -2.5rem);
+    }
+}
+
+@media (min-width: 48rem) and (max-width: 63.999rem) {
+    .mobile-artboard {
+        max-width: min(100%, var(--mobile-artboard-tablet-max-width, clamp(27rem, 54vw, 31rem)));
+    }
+}
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+main {
+    overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+    html,
+    body,
+    main,
+    .safe-overflow {
+        overflow-x: hidden;
+    }
+}

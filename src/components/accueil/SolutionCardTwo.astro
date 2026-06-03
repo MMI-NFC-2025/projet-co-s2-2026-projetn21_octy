@@ -1,0 +1,43 @@
+---
+import cardTwoImage from '../../assets/card-quiz-interactif.png';
+---
+
+<section class="section-responsive safe-overflow relative left-1/2 w-screen max-w-none -translate-x-1/2 overflow-hidden">
+  <div class="mobile-artboard relative aspect-[415/803]" style="--mobile-artboard-sm-min-height: 50.25rem;">
+  <div class="relative z-10 mx-auto flex h-full w-full max-w-[23rem] flex-col items-center px-1 pb-8 pt-14">
+    <article class="relative w-full max-w-none overflow-hidden rounded-[20px] bg-red px-5 pb-6 pt-5">
+      <p class="text-left font-sans text-[0.7rem] leading-none text-beige">V&eacute;rifier</p>
+
+      <h3 class="mt-4 max-w-[15rem] text-left font-heading text-[2rem] font-bold leading-[1.05] text-beige">
+        Quiz interactifs pour tester vos connaissances
+      </h3>
+
+      <p class="mt-4 max-w-[14rem] text-left font-sans text-base leading-[1.15] text-beige">
+        V&eacute;rifiez rapidement que vous avez compris :
+      </p>
+
+      <div class="mt-7 flex justify-center">
+        <img
+          src={cardTwoImage.src}
+          alt="Illustration du quiz interactif Octy"
+          loading="lazy"
+          class="h-auto w-[18.75rem]"
+        />
+      </div>
+
+      <div class="mt-8 flex justify-center">
+        {/* TODO accessibilité: remplacer href="#" par la route cible quand elle sera validée. */}
+        <a
+          href="#"
+          class="inline-flex w-full max-w-[19.875rem] items-center justify-center gap-3 rounded-[20px] bg-beige px-7 py-4 font-sans text-[1.05rem] font-bold text-red"
+        >
+          <svg width="33" height="14" viewBox="0 0 33 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M0 13.087V0.608696L21 4.26087L20.7 3.28344e-06L33 6.39131L20.7 14L21 9.73913L0 13.087Z" fill="currentColor"/>
+          </svg>
+          Tester
+        </a>
+      </div>
+    </article>
+  </div>
+  </div>
+</section>
