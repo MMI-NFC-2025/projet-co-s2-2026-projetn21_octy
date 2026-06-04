@@ -73,7 +73,7 @@ export function getUserProgress(userId = getCurrentUserId()) {
   const completedQuizzes = getStoredList(keys.completedQuizzes);
   const completedParcours = getStoredList(keys.completedParcours);
   const storedLevel = getStoredLevel(keys.xp);
-  const level = Math.max(storedLevel, completedQuizzes.length);
+  const level = storedLevel || completedQuizzes.length;
   const progress = {
     userId: normalizedUserId,
     xp: level,
@@ -128,6 +128,33 @@ export function completeQuizProgress({ quizId, parcoursId, userId = getCurrentUs
   }
 
   return { awarded: true, progress };
+}
+
+export function rememberCompletedQuizProgress({ quizId, parcoursId, userId = getCurrentUserId() } = {}) {
+  const normalizedUserId = userId || 'guest';
+  const currentProgress = getUserProgress(normalizedUserId);
+
+  if (!quizId) {
+    return currentProgress;
+  }
+
+  const keys = progressKeys(normalizedUserId);
+  const progress = {
+    ...currentProgress,
+    completedQuizzes: uniqueStrings([...currentProgress.completedQuizzes, String(quizId)]),
+    completedParcours: parcoursId
+      ? uniqueStrings([...currentProgress.completedParcours, String(parcoursId)])
+      : currentProgress.completedParcours,
+  };
+
+  setStoredList(keys.completedQuizzes, progress.completedQuizzes);
+  setStoredList(keys.completedParcours, progress.completedParcours);
+  if (hasStorage()) {
+    localStorage.setItem(keys.xp, String(progress.level));
+  }
+  persistSnapshot(progress);
+
+  return progress;
 }
 
 export function getProgressPercent(quizIds = [], completedQuizzes = []) {

@@ -2,7 +2,7 @@
 // @ts-nocheck
 import Layout from '../layouts/Layout.astro';
 import CourseLoadingScreen from '../components/CourseLoadingScreen.astro';
-import { getEtapesByParcours, getParcours } from '../js/backend.mjs';
+import { getEtapesByParcours, getParcours, getQuizByEtape } from '../js/backend.mjs';
 
 const tousLesParcours = await getParcours();
 const displayByOrder = {
@@ -20,6 +20,17 @@ const parcoursCards = await Promise.all(
   vraisParcours.map(async (parcours) => {
     const order = Number(parcours.ordre);
     const etapes = await getEtapesByParcours(parcours.id);
+    const steps = await Promise.all(
+      etapes.map(async (etape) => {
+        const quiz = await getQuizByEtape(etape.id);
+
+        return {
+          id: etape.id,
+          href: `/parcours/${parcours.id}/etape/${etape.id}`,
+          quizId: quiz[0]?.id ?? '',
+        };
+      })
+    );
     const firstEtape = etapes[0];
 
     return {
@@ -29,6 +40,7 @@ const parcoursCards = await Promise.all(
       shortName: displayByOrder[order].shortName,
       fullName: parcours.nom_parcours,
       href: firstEtape ? `/parcours/${parcours.id}/etape/${firstEtape.id}` : '/parcours',
+      steps,
     };
   })
 );
@@ -271,6 +283,14 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
     object-fit: fill;
   }
 
+  .home-current.is-empty {
+    padding: 40px 0 34px;
+  }
+
+  .home-current.is-empty .home-section-inner {
+    display: none;
+  }
+
   .home-shape {
     position: absolute;
     top: 0;
@@ -294,9 +314,9 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
   }
 
   .home-recommended.is-first-section {
-    background: #ffcfa5;
-    border-top-right-radius: 34px;
-    padding-top: 24px;
+    background: transparent;
+    border-top-right-radius: 0;
+    padding-top: 54px;
   }
 
   .home-recommended.is-first-section .home-waves {
@@ -304,17 +324,17 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
   }
 
   .home-recommended.is-first-section .home-section-inner h2 {
-    color: #e44d4c;
-  }
-
-  .home-recommended.is-first-section .home-card.is-recommended {
-    background: #e84a4c;
     color: #ffcfa5;
   }
 
-  .home-recommended.is-first-section .home-card.is-recommended .home-card-action {
+  .home-recommended.is-first-section .home-card.is-recommended {
     background: #ffcfa5;
-    color: #eb6856;
+    color: #f15d57;
+  }
+
+  .home-recommended.is-first-section .home-card.is-recommended .home-card-action {
+    background: #e84a4c;
+    color: #ffcfa5;
   }
 
   .home-recommended .home-section-inner {
@@ -441,6 +461,7 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
 <script>
   // @ts-nocheck
   import { getUserProgress } from '../js/progression.mjs';
+  import { getProgressionsByUser } from '../js/backend.mjs';
 
   const root = document.querySelector('[data-home-page]');
   const dataElement = document.getElementById('home-parcours-data');
@@ -478,10 +499,6 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
     }
 
     return 'Utilisateur';
-  };
-
-  const getUserLevel = (userId) => {
-    return getUserProgress(userId).level;
   };
 
   const getAnswersForUser = (userId) => {
@@ -590,6 +607,55 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
     }
   };
 
+  const getCompletedQuizzesFromProgressions = (progressions = []) => {
+    return progressions.flatMap((progression) =>
+      Array.isArray(progression?.quiz_termines)
+        ? progression.quiz_termines.filter(Boolean).map(String)
+        : []
+    );
+  };
+
+  const getRelationId = (value) => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'object' && 'id' in value) return value.id;
+    return '';
+  };
+
+  const getSafePercent = (value) => {
+    const percent = Number.parseInt(value, 10);
+    if (!Number.isFinite(percent)) return 0;
+    return Math.min(100, Math.max(0, percent));
+  };
+
+  const uniqueIds = (items = []) => {
+    return [...new Set(items.filter(Boolean).map(String))];
+  };
+
+  const getCurrentParcoursIdsFromProgressions = (progressions = []) => {
+    return uniqueIds(
+      progressions
+        .filter((progression) => {
+          const completedQuizzes = Array.isArray(progression?.quiz_termines)
+            ? progression.quiz_termines
+            : [];
+          const percent = getSafePercent(progression?.pourcentage);
+          return completedQuizzes.length > 0 && percent < 100;
+        })
+        .map((progression) => getRelationId(progression?.parcours))
+    );
+  };
+
+  const getNextParcoursHref = (parcours, completedQuizzes = []) => {
+    const completed = new Set(completedQuizzes.filter(Boolean).map(String));
+    const steps = Array.isArray(parcours?.steps) ? parcours.steps : [];
+    const nextStep = steps.find((step) => !step.quizId || !completed.has(String(step.quizId)));
+
+    if (nextStep?.href) return nextStep.href;
+    if (parcours?.id) return `/parcours/${parcours.id}/progression`;
+    return parcours?.href || '/parcours';
+  };
+
   if (root instanceof HTMLElement && dataElement) {
     const resetScrollFlag = 'octyHomeResetScrollOnReturn';
     const resetHomeScroll = () => {
@@ -617,14 +683,16 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
     const currentList = root.querySelector('[data-current-list]');
     const recommendedList = root.querySelector('[data-recommended-list]');
     const allParcours = parseJson(dataElement.textContent) || [];
+    const userProgress = getUserProgress(userId);
     const cards = Array.from(root.querySelectorAll('[data-parcours-card]'));
+    const parcoursById = new Map(allParcours.map((parcours) => [parcours.id, parcours]));
 
     if (userNameTarget) {
       userNameTarget.textContent = getUserName();
     }
 
     if (userLevelTarget) {
-      userLevelTarget.textContent = String(getUserLevel(userId));
+      userLevelTarget.textContent = String(userProgress.level);
     }
 
     if (homeAvatar instanceof HTMLImageElement) {
@@ -653,11 +721,25 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
 
     const currentSection = root.querySelector('[data-current-section]');
     const recommendedSection = root.querySelector('[data-recommended-section]');
+    const byId = new Map(cards.map((card) => [card.dataset.parcoursId, card]));
+    const applyCourseActionHrefs = (completedQuizzes = []) => {
+      cards.forEach((card) => {
+        if (!(card instanceof HTMLElement)) return;
 
-    if (state && currentList && recommendedList) {
-      const byId = new Map(cards.map((card) => [card.dataset.parcoursId, card]));
-      const currentIds = Array.isArray(state.current) ? state.current : [];
-      const recommendedIds = Array.isArray(state.recommended) ? state.recommended : [];
+        const parcours = parcoursById.get(card.dataset.parcoursId);
+        const action = card.querySelector('[data-course-action]');
+
+        if (parcours && action instanceof HTMLAnchorElement) {
+          action.href = getNextParcoursHref(parcours, completedQuizzes);
+        }
+      });
+    };
+
+    const renderParcoursState = (nextState) => {
+      if (!nextState || !currentList || !recommendedList) return;
+
+      const currentIds = uniqueIds(Array.isArray(nextState.current) ? nextState.current : []);
+      const recommendedIds = uniqueIds(Array.isArray(nextState.recommended) ? nextState.recommended : []);
       const missingIds = allParcours
         .map((parcours) => parcours.id)
         .filter((id) => !currentIds.includes(id) && !recommendedIds.includes(id));
@@ -680,11 +762,52 @@ const parcoursPayload = JSON.stringify(parcoursCards).replace(/</g, '\\u003c');
       });
 
       if (currentSection instanceof HTMLElement) {
-        currentSection.hidden = currentIds.length === 0;
+        currentSection.hidden = false;
+        currentSection.classList.toggle('is-empty', currentIds.length === 0);
       }
       if (recommendedSection instanceof HTMLElement) {
         recommendedSection.classList.toggle('is-first-section', currentIds.length === 0);
       }
+    };
+
+    if (state && currentList && recommendedList) {
+      renderParcoursState(state);
+    }
+
+    applyCourseActionHrefs(userProgress.completedQuizzes);
+
+    if (userId && userId !== 'guest') {
+      getProgressionsByUser(userId)
+        .then((progressions) => {
+          const completedQuizzes = [
+            ...userProgress.completedQuizzes,
+            ...getCompletedQuizzesFromProgressions(progressions),
+          ];
+          const currentFromProgressions = getCurrentParcoursIdsFromProgressions(progressions);
+          if (currentFromProgressions.length) {
+            const currentState = parseJson(localStorage.getItem(stateKey)) || state || { current: [], recommended: [] };
+            const current = uniqueIds([
+              ...currentFromProgressions,
+              ...(Array.isArray(currentState.current) ? currentState.current : []),
+            ]);
+            const recommended = uniqueIds(
+              Array.isArray(currentState.recommended) ? currentState.recommended : []
+            ).filter((id) => !current.includes(id));
+            const missingRecommended = allParcours
+              .map((parcours) => parcours.id)
+              .filter((id) => !current.includes(id) && !recommended.includes(id));
+            const syncedState = {
+              current,
+              recommended: [...recommended, ...missingRecommended],
+            };
+
+            state = syncedState;
+            localStorage.setItem(stateKey, JSON.stringify(syncedState));
+            renderParcoursState(syncedState);
+          }
+          applyCourseActionHrefs(completedQuizzes);
+        })
+        .catch(() => {});
     }
 
     root.querySelectorAll('[data-course-action]').forEach((link) => {
